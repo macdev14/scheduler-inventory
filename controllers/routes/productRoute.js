@@ -14,6 +14,7 @@ const router = require("express").Router();
 //   },
 // });
 //const upload = multer({ storage });
+// testing
 
 router.route("/product/create").post(
   //upload.single("productImage"),
