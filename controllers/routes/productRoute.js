@@ -4,6 +4,10 @@ const path = require("path");
 const fs = require("fs");
 const router = require("express").Router();
 
+const {
+  productCreatePersistence,
+} = require("../../use-cases/products/createPersistence");
+
 // const storage = multer.diskStorage({
 //   destination: (req, file, cb) => {
 //     cb(null, "uploads/"); // Directory to save files
@@ -14,17 +18,17 @@ const router = require("express").Router();
 //   },
 // });
 //const upload = multer({ storage });
-// testing
 
 router.route("/product/create").post(
   //upload.single("productImage"),
   async (req, res) => {
-    const { productId, productName, productType } = req.body;
+    const { id, name, type } = req.body;
+    const productImage = "";
     //const productImage = req.file;
     try {
-      const product = await userInteractorMongoDB.productCreate(
+      const product = await productInteractorMongoDB.productCreate(
         { productCreatePersistence },
-        { productId, productName, productType, productImage }
+        { id, name, type, productImage }
       );
       res.status(product.status).send(product);
     } catch (error) {

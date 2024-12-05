@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 
-require("../framework/db/mongoDB/models/productModel");
+require("dotenv").config();
+require("../../framework/db/mongoDB/models/productModel");
 const Product = mongoose.model("Product");
 
 exports.productCreatePersistence = async (product) => {

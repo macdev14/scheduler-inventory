@@ -29,7 +29,7 @@ app.use(bodyParser.urlencoded({ extended: true })); //allowing for extended synt
 app.use("/", express.static(path.join(__dirname, "public"))); //available static route at http://localhost:5565
 // app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument)); //serve api documentation
 // app.use("/api-docjs", express.static("./public/apidocjs")); //available route at http://localhost:5565/api-docjs/
-app.use("/api", require("./controllers/routes/productRoute")); //user route
+app.use("/api", require("./controllers/routes/productRoute")); //product route
 
 app.listen(port, () => {
   console.log("Server running on port: " + port);
