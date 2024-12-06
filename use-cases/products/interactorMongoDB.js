@@ -53,3 +53,12 @@ exports.productReadId = async ({ productIdReadPersistence }, id) => {
     return { success: false, status: 500, message: "Something went wrong." };
   }
 };
+
+exports.productDelete = async ({ productDeletePersistence }, id) => {
+  try {
+    const product = await productDeletePersistence(id);
+    return product;
+  } catch (error) {
+    return { success: false, status: 500, message: "Something went wrong." };
+  }
+};

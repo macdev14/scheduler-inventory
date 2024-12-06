@@ -13,6 +13,10 @@ const {
   productIdReadPersistence,
 } = require("../../use-cases/products/readPersistence");
 
+const {
+  productDeletePersistence,
+} = require("../../use-cases/products/deletePersistence");
+
 // const storage = multer.diskStorage({
 //   destination: (req, file, cb) => {
 //     cb(null, "uploads/"); // Directory to save files
@@ -60,6 +64,21 @@ router.route("/product").get(async (req, res) => {
   try {
     const product = await productInteractorMongoDB.productReadId(
       { productIdReadPersistence },
+      id
+    );
+    res.status(product.status).send(product);
+  } catch (error) {
+    throw error;
+  }
+});
+
+router.route("/product").delete(async (req, res) => {
+  const { id } = req.body;
+  //res.json({ message: `Produto com ID ${id} encontrado!` });
+  console.log("product: ", id);
+  try {
+    const product = await productInteractorMongoDB.productDelete(
+      { productDeletePersistence },
       id
     );
     res.status(product.status).send(product);
