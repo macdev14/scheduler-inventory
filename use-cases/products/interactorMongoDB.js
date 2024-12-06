@@ -62,3 +62,12 @@ exports.productDelete = async ({ productDeletePersistence }, id) => {
     return { success: false, status: 500, message: "Something went wrong." };
   }
 };
+
+exports.productUpdate = async ({ productUpdatePersistence }, product) => {
+  try {
+    const updatedProduct = await productUpdatePersistence(product);
+    return updatedProduct;
+  } catch (error) {
+    return { success: false, status: 500, message: "Something went wrong." };
+  }
+};

@@ -17,6 +17,10 @@ const {
   productDeletePersistence,
 } = require("../../use-cases/products/deletePersistence");
 
+const {
+  productUpdatePersistence,
+} = require("../../use-cases/products/updatePersistence");
+
 // const storage = multer.diskStorage({
 //   destination: (req, file, cb) => {
 //     cb(null, "uploads/"); // Directory to save files
@@ -28,7 +32,7 @@ const {
 // });
 //const upload = multer({ storage });
 
-router.route("/product/create").post(
+router.route("/product").post(
   //upload.single("productImage"),
   async (req, res) => {
     const { id, name, type } = req.body;
@@ -80,6 +84,21 @@ router.route("/product").delete(async (req, res) => {
     const product = await productInteractorMongoDB.productDelete(
       { productDeletePersistence },
       id
+    );
+    res.status(product.status).send(product);
+  } catch (error) {
+    throw error;
+  }
+});
+
+router.route("/product").put(async (req, res) => {
+  const { id, name, type } = req.body;
+  //res.json({ message: `Produto com ID ${id} encontrado!` });
+  console.log("product: ", id);
+  try {
+    const product = await productInteractorMongoDB.productUpdate(
+      { productUpdatePersistence },
+      { id, name, type }
     );
     res.status(product.status).send(product);
   } catch (error) {
