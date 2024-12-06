@@ -5,7 +5,7 @@ require("../../framework/db/mongoDB/models/productModel");
 const Product = mongoose.model("Product");
 
 exports.productCreatePersistence = async (product) => {
-  console.log("product", product);
+  console.log("product 999", product);
 
   try {
     const response = await Product.create(product);

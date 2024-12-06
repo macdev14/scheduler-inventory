@@ -4,8 +4,8 @@ exports.ProductEntity = class ProductEntity {
     this.name = product.name;
     // this.description = product.description;
     // this.price = product.price;
-    this.type = product.type;
-    this.image = product.image;
+    this.product_type_id = product.product_type_id;
+    this.image_url = product.image_url;
     this.active = product.active;
   }
 };

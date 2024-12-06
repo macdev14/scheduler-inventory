@@ -1,5 +1,5 @@
 const productInteractorMongoDB = require("../../use-cases/products/interactorMongoDB");
-//const multer = require("multer");
+const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
 const router = require("express").Router();
@@ -21,34 +21,36 @@ const {
   productUpdatePersistence,
 } = require("../../use-cases/products/updatePersistence");
 
-// const storage = multer.diskStorage({
-//   destination: (req, file, cb) => {
-//     cb(null, "uploads/"); // Directory to save files
-//   },
-//   filename: (req, file, cb) => {
-//     const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-//     cb(null, uniqueSuffix + path.extname(file.originalname)); // Ensure unique filenames
-//   },
-// });
-//const upload = multer({ storage });
+let fileName = "";
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "uploads/"); // Directory to save files
+  },
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+    fileName = uniqueSuffix + path.extname(file.originalname);
+    cb(null, uniqueSuffix + path.extname(file.originalname)); // Ensure unique filenames
+  },
+});
+const upload = multer({ storage });
 
-router.route("/product").post(
-  //upload.single("productImage"),
-  async (req, res) => {
-    const { id, name, type } = req.body;
-    const productImage = "";
-    //const productImage = req.file;
-    try {
-      const product = await productInteractorMongoDB.productCreate(
-        { productCreatePersistence },
-        { id, name, type, productImage }
-      );
-      res.status(product.status).send(product);
-    } catch (error) {
-      throw error;
-    }
+router.route("/product").post(upload.single("image_url"), async (req, res) => {
+  //const image_url = path.extname(req.file.originalname);
+  //const image_url = req.file.originalname;
+  const image_url = fileName;
+
+  const { id, name, product_type_id } = req.body;
+
+  try {
+    const product = await productInteractorMongoDB.productCreate(
+      { productCreatePersistence },
+      { id, name, product_type_id, image_url }
+    );
+    res.status(product.status).send(product);
+  } catch (error) {
+    throw error;
   }
-);
+});
 
 router.route("/product/all").get(async (req, res) => {
   try {
@@ -63,7 +65,6 @@ router.route("/product/all").get(async (req, res) => {
 
 router.route("/product").get(async (req, res) => {
   const id = req.query.id;
-  //res.json({ message: `Produto com ID ${id} encontrado!` });
   console.log("product: ", id);
   try {
     const product = await productInteractorMongoDB.productReadId(
@@ -78,7 +79,6 @@ router.route("/product").get(async (req, res) => {
 
 router.route("/product").delete(async (req, res) => {
   const { id } = req.body;
-  //res.json({ message: `Produto com ID ${id} encontrado!` });
   console.log("product: ", id);
   try {
     const product = await productInteractorMongoDB.productDelete(
@@ -91,14 +91,15 @@ router.route("/product").delete(async (req, res) => {
   }
 });
 
-router.route("/product").put(async (req, res) => {
-  const { id, name, type } = req.body;
-  //res.json({ message: `Produto com ID ${id} encontrado!` });
-  console.log("product: ", id);
+router.route("/product").put(upload.single("image_url"), async (req, res) => {
+  const image_url = fileName;
+
+  const { id, name, product_type_id } = req.body;
+
   try {
     const product = await productInteractorMongoDB.productUpdate(
       { productUpdatePersistence },
-      { id, name, type }
+      { id, name, product_type_id, image_url }
     );
     res.status(product.status).send(product);
   } catch (error) {

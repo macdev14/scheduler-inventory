@@ -4,15 +4,15 @@ const { ProductEntity } = require("../../entities/ProductEntity");
 
 exports.productCreate = async (
   { productCreatePersistence },
-  { id, name, type, image }
+  { id, name, product_type_id, image_url }
 ) => {
   try {
     //persiste
     const product = new ProductEntity({
       id,
       name,
-      type,
-      image,
+      product_type_id,
+      image_url,
       active: true,
     });
 
