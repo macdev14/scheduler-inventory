@@ -15,7 +15,6 @@ exports.productReadPersistence = async () => {
 
 exports.productIdReadPersistence = async (id) => {
   try {
-    console.log("id teste", id);
     const product = await Product.find({ id: id });
     console.log("product", product);
     return { success: true, status: 200, data: product };
