@@ -15,15 +15,41 @@ exports.productCreate = async (
       image,
       active: true,
     });
+
     console.log("product", product);
 
     const createProduct = await productCreatePersistence(product);
+
     return createProduct;
   } catch (error) {
     console.log("error", error);
+
     if (error.code === 11000) {
-      return { status: 400, message: "product already exists" };
+      return {
+        success: false,
+        status: 400,
+        message: "Product already exists.",
+      };
     }
-    return { status: 500, message: "Something went wrong" };
+    return { success: false, status: 500, message: "Something went wrong." };
+  }
+};
+
+exports.productRead = async ({ productReadPersistence }) => {
+  try {
+    const products = await productReadPersistence();
+    return products;
+  } catch (error) {
+    return { success: false, status: 500, message: "Something went wrong." };
+  }
+};
+
+exports.productReadId = async ({ productIdReadPersistence }, id) => {
+  try {
+    const product = await productIdReadPersistence(id);
+
+    return product;
+  } catch (error) {
+    return { success: false, status: 500, message: "Something went wrong." };
   }
 };
