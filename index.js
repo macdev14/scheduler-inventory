@@ -4,6 +4,8 @@ const path = require("path");
 require("dotenv").config();
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
+const { createProductTypesPersistence } = require("./use-cases/product_types/createProductTypesPersistence");
+const productTypeInteractorMongoDB = require("./use-cases/product_types/interactorMongoDB");
 // const swaggerUi = require('swagger-ui-express');
 // const swaggerDocument = require('./public/swagger/swagger.json');
 
@@ -16,8 +18,15 @@ mongoose
   .connect(uri)
   .then(() => {
     console.log("Connected to the database");
-  })
-  .catch((err) => {
+    (async () => {
+      try {
+          const productTypes = await productTypeInteractorMongoDB.createProductTypes({createProductTypesPersistence}, {});
+          console.log(productTypes);
+      } catch (err) {
+          console.log("err", err);
+      }
+  })();
+  }).catch((err) => {
     console.log(err);
   });
 
