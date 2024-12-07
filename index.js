@@ -32,6 +32,7 @@ app.use("/", express.static(path.join(__dirname, "public"))); //available static
 app.use("/api", require("./controllers/routes/productRoute")); //product route
 app.use("/api", require("./controllers/routes/productTypeRoute")); //product types route
 app.use("/api", require("./controllers/routes/warehouseRoute")); //warehouse route
+app.use("/api", require("./controllers/routes/stockRoute")); //stock route
 
 app.listen(port, () => {
   console.log("Server running on port: " + port);

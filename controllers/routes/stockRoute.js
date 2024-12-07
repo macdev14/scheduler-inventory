@@ -7,6 +7,7 @@ const {
 
 const {
   stockReadPersistence,
+  stockIdReadPersistence,
 } = require("../../use-cases/stocks/readPersistence");
 
 const {
@@ -18,14 +19,14 @@ const {
 } = require("../../use-cases/stocks/updatePersistence");
 
 router.route("/stock").post(async (req, res) => {
-  const { id, name, product_type_id } = req.body;
+  const { product_id, warehouse_id, quantity } = req.body;
 
   try {
-    const product = await stockInteractorMongoDB.stockCreate(
-      { productCreatePersistence },
-      { id, name, product_type_id, image_url }
+    const stock = await stockInteractorMongoDB.stockCreate(
+      { stockCreatePersistence },
+      { product_id, warehouse_id, quantity }
     );
-    res.status(product.status).send(product);
+    res.status(stock.status).send(stock);
   } catch (error) {
     throw error;
   }
@@ -33,10 +34,10 @@ router.route("/stock").post(async (req, res) => {
 
 router.route("/stock/all").get(async (req, res) => {
   try {
-    const products = await productInteractorMongoDB.productRead({
-      productReadPersistence,
+    const stocks = await stockInteractorMongoDB.stockRead({
+      stockReadPersistence,
     });
-    res.status(products.status).send(products);
+    res.status(stocks.status).send(stocks);
   } catch (error) {
     throw error;
   }
@@ -47,41 +48,39 @@ router.route("/stock").get(async (req, res) => {
   console.log("product: ", product_id);
 
   try {
-    const product = await stockInteractorMongoDB.stockReadId(
-      { productIdReadPersistence },
-      id
+    const stock = await stockInteractorMongoDB.stockReadId(
+      { stockIdReadPersistence },
+      product_id
     );
-    res.status(product.status).send(product);
+    res.status(stock.status).send(stock);
   } catch (error) {
     throw error;
   }
 });
 
-router.route("/product").delete(async (req, res) => {
-  const { id } = req.body;
-  console.log("product: ", id);
+router.route("/stock").delete(async (req, res) => {
+  const { _id } = req.body;
+  console.log("_id: ", _id);
   try {
-    const product = await productInteractorMongoDB.productDelete(
-      { productDeletePersistence },
-      id
+    const stock = await stockInteractorMongoDB.stockDelete(
+      { stockDeletePersistence },
+      _id
     );
-    res.status(product.status).send(product);
+    res.status(stock.status).send(stock);
   } catch (error) {
     throw error;
   }
 });
 
-router.route("/product").put(upload.single("image_url"), async (req, res) => {
-  const image_url = fileName;
-
-  const { id, name, product_type_id } = req.body;
+router.route("/stock").put(async (req, res) => {
+  const { product_id, warehouse_id, quantity } = req.body;
 
   try {
-    const product = await productInteractorMongoDB.productUpdate(
-      { productUpdatePersistence },
-      { id, name, product_type_id, image_url }
+    const stock = await stockInteractorMongoDB.stockUpdate(
+      { stockUpdatePersistence },
+      { product_id, warehouse_id, quantity }
     );
-    res.status(product.status).send(product);
+    res.status(stock.status).send(stock);
   } catch (error) {
     throw error;
   }
