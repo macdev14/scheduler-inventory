@@ -31,6 +31,7 @@ app.use("/", express.static(path.join(__dirname, "public"))); //available static
 // app.use("/api-docjs", express.static("./public/apidocjs")); //available route at http://localhost:5565/api-docjs/
 app.use("/api", require("./controllers/routes/productRoute")); //product route
 app.use("/api", require("./controllers/routes/productTypeRoute")); //product types route
+app.use("/api", require("./controllers/routes/warehouseRoute")); //warehouse route
 
 app.listen(port, () => {
   console.log("Server running on port: " + port);

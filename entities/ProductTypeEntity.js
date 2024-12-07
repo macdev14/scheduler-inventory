@@ -1,7 +1,7 @@
 exports.ProductTypeEntity = class ProductTypeEntity {
-  constructor(product) {
-    this.id = product.id;
-    this.name = product.name;
-    this.active = product.active;
+  constructor(productType) {
+    this.id = productType.id;
+    this.name = productType.name;
+    this.active = productType.active;
   }
 };
