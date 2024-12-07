@@ -1,0 +1,43 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: 
+      - "master"
+  pull_request:
+    branches: 
+      - "master"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      # Step 1: Check out the repository
+      - name: Check out the repository
+        uses: actions/checkout@v4
+
+      # Step 2: Set up Docker Buildx (recommended for advanced builds)
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      # Step 3: Log in to Docker Hub (if pushing the image)
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      # Step 4: Install dependencies and run tests
+      - name: Install dependencies and run tests
+        run: |
+          npm install
+        env:
+          MONGO_CONNECTION_STRING: ${{ secrets.MONGO_CONNECTION_STRING }}
+          SECRET_KEY: ${{ secrets.DOCKER_USERNAME }}
+      # Step 4: Build and optionally tag the Docker image
+      - name: Build the Docker image
+        run: docker build . --file Dockerfile --tag lmtp/scheduler-inventory:latest
+        
+      - name: Push Docker image
+        run: docker push lmtp/scheduler-inventory:latest
+          
