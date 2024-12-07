@@ -8,6 +8,7 @@ const warehouseSchema = new Schema(
     id: { type: Number, required: true },
     name: { type: String, required: true },
     address_id: { type: Number, required: true },
+    active: { type: Boolean, required: true, default: true },
   },
   { collection: "warehouse" }
 );
