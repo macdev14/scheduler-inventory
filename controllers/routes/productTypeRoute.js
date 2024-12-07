@@ -1,7 +1,4 @@
 const productTypeInteractorMongoDB = require("../../use-cases/product_types/interactorMongoDB");
-const multer = require("multer");
-const path = require("path");
-const fs = require("fs");
 const router = require("express").Router();
 
 const {
