@@ -1,18 +1,19 @@
 "use strict";
 
-const { StockEntity } = require("../../entities/StockEntity");
+const { StockJwtEntity } = require("../../entities/StockJwtEntity");
 
 exports.stockCreate = async (
   { stockCreatePersistence },
-  { product_id, warehouse_id, quantity }
+  { product_id, warehouse_id, quantity, token }
 ) => {
   try {
     //persiste
-    const stock = new StockEntity({
+    const stock = new StockJwtEntity({
       product_id,
       warehouse_id,
       quantity,
       active: true,
+      token,
     });
 
     console.log("stock", stock);
@@ -53,19 +54,19 @@ exports.stockReadId = async ({ stockIdReadPersistence }, product_id) => {
   }
 };
 
-exports.stockDelete = async ({ stockDeletePersistence }, id) => {
+exports.stockDelete = async ({ stockDeletePersistence }, stock) => {
   try {
-    const product = await productDeletePersistence(id);
-    return product;
+    const stockDeleted = await stockDeletePersistence(stock);
+    return stockDeleted;
   } catch (error) {
     return { success: false, status: 500, message: "Something went wrong." };
   }
 };
 
-exports.stockUpdate = async ({ productUpdatePersistence }, product) => {
+exports.stockUpdate = async ({ stockUpdatePersistence }, stock) => {
   try {
-    const updatedProduct = await productUpdatePersistence(product);
-    return updatedProduct;
+    const updatedStock = await stockUpdatePersistence(stock);
+    return updatedStock;
   } catch (error) {
     return { success: false, status: 500, message: "Something went wrong." };
   }

@@ -19,12 +19,13 @@ const {
 } = require("../../use-cases/stocks/updatePersistence");
 
 router.route("/stock").post(async (req, res) => {
+  const token = req.headers["token"];
   const { product_id, warehouse_id, quantity } = req.body;
 
   try {
     const stock = await stockInteractorMongoDB.stockCreate(
       { stockCreatePersistence },
-      { product_id, warehouse_id, quantity }
+      { product_id, warehouse_id, quantity, token }
     );
     res.status(stock.status).send(stock);
   } catch (error) {
@@ -45,7 +46,6 @@ router.route("/stock/all").get(async (req, res) => {
 
 router.route("/stock").get(async (req, res) => {
   const product_id = req.query.product_id;
-  console.log("product: ", product_id);
 
   try {
     const stock = await stockInteractorMongoDB.stockReadId(
@@ -59,12 +59,13 @@ router.route("/stock").get(async (req, res) => {
 });
 
 router.route("/stock").delete(async (req, res) => {
-  const { _id } = req.body;
-  console.log("_id: ", _id);
+  const token = req.headers["token"];
+  const { product_id, warehouse_id } = req.body;
+
   try {
     const stock = await stockInteractorMongoDB.stockDelete(
       { stockDeletePersistence },
-      _id
+      { product_id, warehouse_id, token }
     );
     res.status(stock.status).send(stock);
   } catch (error) {
@@ -73,12 +74,13 @@ router.route("/stock").delete(async (req, res) => {
 });
 
 router.route("/stock").put(async (req, res) => {
+  const token = req.headers["token"];
   const { product_id, warehouse_id, quantity } = req.body;
 
   try {
     const stock = await stockInteractorMongoDB.stockUpdate(
       { stockUpdatePersistence },
-      { product_id, warehouse_id, quantity }
+      { product_id, warehouse_id, quantity, token }
     );
     res.status(stock.status).send(stock);
   } catch (error) {
