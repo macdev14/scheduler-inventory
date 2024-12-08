@@ -6,14 +6,15 @@ const {
   productTypeIdReadPersistence,
 } = require("../../use-cases/product_types/readPersistence");
 
+
 /**
- * @route GET /productType/all
- * @group Product Types
- * @summary Get all product types
- * @returns {object} 200 - An array of product types
- * @returns {Error}  400 - Bad request
- * @returns {Error}  404 - Product types not found
- * @returns {Error}  500 - Internal Server Error
+ * @api {get} /productType/all Get all product types
+ * @apiName GetProductTypesAll
+ * @apiGroup ProductTypes
+ * @apiVersion 1.0.0
+ * @apiPermission authenticated user
+ * @apiSuccess {Object[]} Array of product type entries
+ * @apiError {Error} 500 Internal Server Error
  */
 router.route("/productType/all").get(async (req, res) => {
   try {
@@ -27,14 +28,14 @@ router.route("/productType/all").get(async (req, res) => {
 });
 
 /**
- * @route GET /productType
- * @group Product Types
- * @summary Get product type by ID
- * @param {string} id.query - Product type ID
- * @returns {object} 200 - Product type details
- * @returns {Error}  400 - Bad request
- * @returns {Error}  404 - Product type not found
- * @returns {Error}  500 - Internal Server Error
+ * @api {get} /productType Get a product type entry by ID
+ * @apiName GetProductType
+ * @apiGroup ProductTypes
+ * @apiPermission authenticated user
+ * @apiParam {Number} id Product Type ID
+ * @apiSuccess {Object} Product type entry
+ * @apiError {Error} 404 Product type not found
+ * @apiError {Error} 500 Internal Server Error
  */
 router.route("/productType").get(async (req, res) => {
   const id = req.query.id;

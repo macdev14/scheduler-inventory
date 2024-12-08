@@ -8,13 +8,13 @@ const {
 } = require("../../use-cases/warehouses/readPersistence");
 
 /**
- * @route GET /warehouse/all
- * @group Warehouses
- * @summary Get all warehouses
- * @returns {object} 200 - An array of warehouses
- * @returns {Error}  400 - Bad request
- * @returns {Error}  404 - Warehouses not found
- * @returns {Error}  500 - Internal Server Error
+ * @api {get} /warehouse/all Get all warehouse entries
+ * @apiName GetWarehouseAll
+ * @apiGroup Warehouses
+ * @apiVersion 1.0.0
+ * @apiPermission authenticated user
+ * @apiSuccess {Object[]} Array of warehouse entries
+ * @apiError {Error} 500 Internal Server Error
  */
 router.route("/warehouse/all").get(async (req, res) => {
   try {
@@ -28,14 +28,15 @@ router.route("/warehouse/all").get(async (req, res) => {
 });
 
 /**
- * @route GET /warehouse
- * @group Warehouses
- * @summary Get warehouse by ID
- * @param {string} id.query - Warehouse ID
- * @returns {object} 200 - Warehouse details
- * @returns {Error}  400 - Bad request
- * @returns {Error}  404 - Warehouse not found
- * @returns {Error}  500 - Internal Server Error
+ * @api {get} /warehouse Get a warehouse entry by ID
+ * @apiName GetWarehouse
+ * @apiGroup Warehouses
+ * @apiVersion 1.0.0
+ * @apiPermission authenticated user
+ * @apiParam {String} id Warehouse ID
+ * @apiSuccess {Object} Warehouse entry
+ * @apiError {Error} 404 Warehouse not found
+ * @apiError {Error} 500 Internal Server Error
  */
 router.route("/warehouse").get(async (req, res) => {
   const id = req.query.id;
