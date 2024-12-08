@@ -38,13 +38,13 @@ router.route("/product").post(upload.single("image_url"), async (req, res) => {
   //const image_url = path.extname(req.file.originalname);
   //const image_url = req.file.originalname;
   const image_url = fileName;
-
+  const token = req.headers["token"];
   const { id, name, product_type_id } = req.body;
-
+  console.log("TOKEN:", token);
   try {
     const product = await productInteractorMongoDB.productCreate(
       { productCreatePersistence },
-      { id, name, product_type_id, image_url }
+      { id, name, product_type_id, image_url, token }
     );
     res.status(product.status).send(product);
   } catch (error) {
@@ -78,13 +78,15 @@ router.route("/product").get(async (req, res) => {
 });
 
 router.route("/product").delete(async (req, res) => {
+  const token = req.headers["token"];
   const { id } = req.body;
-  console.log("product: ", id);
+
   try {
     const product = await productInteractorMongoDB.productDelete(
       { productDeletePersistence },
-      id
+      { id, token }
     );
+
     res.status(product.status).send(product);
   } catch (error) {
     throw error;
@@ -92,14 +94,14 @@ router.route("/product").delete(async (req, res) => {
 });
 
 router.route("/product").put(upload.single("image_url"), async (req, res) => {
+  const token = req.headers["token"];
   const image_url = fileName;
-
   const { id, name, product_type_id } = req.body;
 
   try {
     const product = await productInteractorMongoDB.productUpdate(
       { productUpdatePersistence },
-      { id, name, product_type_id, image_url }
+      { id, name, product_type_id, image_url, token }
     );
     res.status(product.status).send(product);
   } catch (error) {

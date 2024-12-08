@@ -1,19 +1,20 @@
 "use strict";
 
-const { ProductEntity } = require("../../entities/ProductEntity");
+const { ProductJwtEntity } = require("../../entities/ProductJwtEntity");
 
 exports.productCreate = async (
   { productCreatePersistence },
-  { id, name, product_type_id, image_url }
+  { id, name, product_type_id, image_url, token }
 ) => {
   try {
     //persiste
-    const product = new ProductEntity({
+    const product = new ProductJwtEntity({
       id,
       name,
       product_type_id,
       image_url,
       active: true,
+      token,
     });
 
     console.log("product", product);
