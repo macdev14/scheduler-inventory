@@ -7,6 +7,15 @@ const {
   warehouseIdReadPersistence,
 } = require("../../use-cases/warehouses/readPersistence");
 
+/**
+ * @route GET /warehouse/all
+ * @group Warehouses
+ * @summary Get all warehouses
+ * @returns {object} 200 - An array of warehouses
+ * @returns {Error}  400 - Bad request
+ * @returns {Error}  404 - Warehouses not found
+ * @returns {Error}  500 - Internal Server Error
+ */
 router.route("/warehouse/all").get(async (req, res) => {
   try {
     const warehouses = await warehouseInteractorMongoDB.warehouseRead({
@@ -18,6 +27,16 @@ router.route("/warehouse/all").get(async (req, res) => {
   }
 });
 
+/**
+ * @route GET /warehouse
+ * @group Warehouses
+ * @summary Get warehouse by ID
+ * @param {string} id.query - Warehouse ID
+ * @returns {object} 200 - Warehouse details
+ * @returns {Error}  400 - Bad request
+ * @returns {Error}  404 - Warehouse not found
+ * @returns {Error}  500 - Internal Server Error
+ */
 router.route("/warehouse").get(async (req, res) => {
   const id = req.query.id;
   try {

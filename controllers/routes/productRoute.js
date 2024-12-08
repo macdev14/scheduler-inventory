@@ -34,6 +34,17 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
+/**
+ * @route POST /product
+ * @param {object} req - Express request object
+ * @param {object} req.body - Contains the product details
+ * @param {string} req.body.id - Product ID
+ * @param {string} req.body.name - Product name
+ * @param {string} req.body.product_type_id - Product type ID
+ * @param {object} req.file - Uploaded file object
+ * @param {object} res - Express response object
+ * @returns {object} - Response with status and product details
+ */
 router.route("/product").post(upload.single("image_url"), async (req, res) => {
   //const image_url = path.extname(req.file.originalname);
   //const image_url = req.file.originalname;
@@ -52,7 +63,17 @@ router.route("/product").post(upload.single("image_url"), async (req, res) => {
   }
 });
 
+/**
+ * @route GET /product/all
+ * @group Products
+ * @summary Get all products
+ * @returns {object} 200 - An array of products
+ * @returns {Error}  400 - Bad request
+ * @returns {Error}  404 - Products not found
+ * @returns {Error}  500 - Internal Server Error
+ */
 router.route("/product/all").get(async (req, res) => {
+  /******  0a098c67-5179-491a-9932-f091f5d7fab5  *******/
   try {
     const products = await productInteractorMongoDB.productRead({
       productReadPersistence,
@@ -63,9 +84,19 @@ router.route("/product/all").get(async (req, res) => {
   }
 });
 
+/**
+ * @route GET /product
+ * @group Products
+ * @summary Get product by ID
+ * @param {string} id.query - Product ID
+ * @returns {object} 200 - Product details
+ * @returns {Error}  400 - Bad request
+ * @returns {Error}  404 - Product not found
+ * @returns {Error}  500 - Internal Server Error
+ */
 router.route("/product").get(async (req, res) => {
   const id = req.query.id;
-  console.log("product: ", id);
+
   try {
     const product = await productInteractorMongoDB.productReadId(
       { productIdReadPersistence },
@@ -77,6 +108,17 @@ router.route("/product").get(async (req, res) => {
   }
 });
 
+/**
+ * @route DELETE /product
+ * @group Products
+ * @summary Delete product by ID
+ * @param {string} id.body.required - Product ID
+ * @param {string} token.header.required - Token
+ * @returns {object} 200 - Product deleted
+ * @returns {Error}  400 - Bad request
+ * @returns {Error}  404 - Product not found
+ * @returns {Error}  500 - Internal Server Error
+ */
 router.route("/product").delete(async (req, res) => {
   const token = req.headers["token"];
   const { id } = req.body;
@@ -93,8 +135,23 @@ router.route("/product").delete(async (req, res) => {
   }
 });
 
+/**
+ * @route PUT /product
+ * @group Products
+ * @summary Update product by ID
+ * @param {string} id.body.required - Product ID
+ * @param {string} name.body.required - Product name
+ * @param {string} product_type_id.body.required - Product type ID
+ * @param {file} image_url.formData - Product image
+ * @param {string} token.header.required - Token
+ * @returns {object} 200 - Product updated
+ * @returns {Error}  400 - Bad request
+ * @returns {Error}  404 - Product not found
+ * @returns {Error}  500 - Internal Server Error
+ */
 router.route("/product").put(upload.single("image_url"), async (req, res) => {
   const token = req.headers["token"];
+
   const image_url = fileName;
   const { id, name, product_type_id } = req.body;
 

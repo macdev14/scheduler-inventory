@@ -18,6 +18,18 @@ const {
   stockUpdatePersistence,
 } = require("../../use-cases/stocks/updatePersistence");
 
+/**
+ * @route POST /stock
+ * @group Stocks
+ * @summary Create a new stock entry
+ * @param {string} product_id.body.required - Product ID
+ * @param {string} warehouse_id.body.required - Warehouse ID
+ * @param {number} quantity.body.required - Quantity of stock
+ * @param {string} token.header.required - Token for authentication
+ * @returns {object} 200 - Stock created successfully
+ * @returns {Error} 400 - Product already exists
+ * @returns {Error} 500 - Internal Server Error
+ */
 router.route("/stock").post(async (req, res) => {
   const token = req.headers["token"];
   const { product_id, warehouse_id, quantity } = req.body;
@@ -33,6 +45,13 @@ router.route("/stock").post(async (req, res) => {
   }
 });
 
+/**
+ * @route GET /stock/all
+ * @group Stocks
+ * @summary Get all stock entries
+ * @returns {object} 200 - Array of stock entries
+ * @returns {Error}  500 - Internal Server Error
+ */
 router.route("/stock/all").get(async (req, res) => {
   try {
     const stocks = await stockInteractorMongoDB.stockRead({
@@ -44,6 +63,14 @@ router.route("/stock/all").get(async (req, res) => {
   }
 });
 
+/**
+ * @route GET /stock
+ * @group Stocks
+ * @summary Get stock entry by product ID
+ * @param {string} product_id.query - Product ID
+ * @returns {object} 200 - Stock entry details
+ * @returns {Error} 500 - Internal Server Error
+ */
 router.route("/stock").get(async (req, res) => {
   const product_id = req.query.product_id;
 
@@ -58,6 +85,16 @@ router.route("/stock").get(async (req, res) => {
   }
 });
 
+/**
+ * @route DELETE /stock
+ * @group Stocks
+ * @summary Delete a stock entry
+ * @param {string} product_id.body.required - Product ID
+ * @param {string} warehouse_id.body.required - Warehouse ID
+ * @param {string} token.header.required - Token for authentication
+ * @returns {object} 200 - Stock deleted successfully
+ * @returns {Error} 500 - Internal Server Error
+ */
 router.route("/stock").delete(async (req, res) => {
   const token = req.headers["token"];
   const { product_id, warehouse_id } = req.body;
@@ -73,6 +110,17 @@ router.route("/stock").delete(async (req, res) => {
   }
 });
 
+/**
+ * @route PUT /stock
+ * @group Stocks
+ * @summary Update a stock entry
+ * @param {string} product_id.body.required - Product ID
+ * @param {string} warehouse_id.body.required - Warehouse ID
+ * @param {number} quantity.body.required - Quantity of stock
+ * @param {string} token.header.required - Token for authentication
+ * @returns {object} 200 - Stock updated successfully
+ * @returns {Error} 500 - Internal Server Error
+ */
 router.route("/stock").put(async (req, res) => {
   const token = req.headers["token"];
   const { product_id, warehouse_id, quantity } = req.body;

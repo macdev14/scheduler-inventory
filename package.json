@@ -7,7 +7,7 @@
     "start": "nodemon index.js"
   },
   "keywords": [],
-  "author": "Bruno Ribeiro",
+  "author": "MEI - Grupo 4",
   "license": "ISC",
   "description": "Aplicação de gestão de inventários de produtos",
   "dependencies": {

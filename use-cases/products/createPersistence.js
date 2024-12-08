@@ -42,6 +42,15 @@ const validations = async (product) => {
   return { success: true };
 };
 
+/**
+ * Create a new product
+ * @param {Object} product - Product object
+ * @param {string} product.id - Product id
+ * @param {string} product.name - Product name
+ * @param {string} product.product_type_id - Product type id
+ * @param {string} product.token - Token
+ * @returns {Object} - Status and message
+ */
 exports.productCreatePersistence = async (product) => {
   try {
     const decoded = jwt.verify(product.token, process.env.SECRET_KEY);
