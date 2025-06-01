@@ -21,22 +21,6 @@ const validations = async (stock) => {
     };
   }
 
-  if (!stock.quantity) {
-    return {
-      success: false,
-      status: 400,
-      message: "Quantity is required.",
-    };
-  }
-
-  if (stock.quantity < 0) {
-    return {
-      success: false,
-      status: 400,
-      message: "Quantity cannot be negative.",
-    };
-  }
-
   const stockExists = await Stock.findOne({
     product_id: stock.product_id,
     warehouse_id: stock.warehouse_id,
@@ -45,7 +29,7 @@ const validations = async (stock) => {
   if (!stockExists) {
     return {
       success: false,
-      status: 400,
+      status: 404,
       message: "Product stock not exists.",
     };
   }
@@ -53,10 +37,9 @@ const validations = async (stock) => {
   return { success: true };
 };
 
-exports.stockUpdatePersistence = async (stock) => {
+exports.stocksDelete = async (stock) => {
   try {
     const decoded = jwt.verify(stock.token, process.env.SECRET_KEY);
-
     if (
       decoded.role == process.env.ROLE_ADMIN ||
       decoded.role == process.env.ROLE_MANAGER
@@ -69,17 +52,16 @@ exports.stockUpdatePersistence = async (stock) => {
         return validationResult;
       }
 
-      const updatedStock = await Stock.findOneAndUpdate(
-        { product_id: stock.product_id, warehouse_id: stock.warehouse_id },
-        stock,
-        { new: true }
-      );
+      const response = await Stock.findOneAndDelete({
+        product_id: stock.product_id,
+        warehouse_id: stock.warehouse_id,
+      });
 
-      if (!updatedStock || updatedStock.length === 0) {
+      if (!response || response.length === 0) {
         return { status: 404, message: "Product stock not found." };
       }
 
-      return { success: true, status: 200, data: updatedStock };
+      return { success: true, status: 200, data: response };
     }
   } catch (error) {
     return { success: false, status: 500, message: "Something went wrong." };

@@ -14,7 +14,7 @@ require("dotenv").config();
  * - { status: 201, message: "Product types created successfully" } if new product types were created.
  * - { status: 500, message: "Something went wrong during event type creation", error: error.message } in case of an error.
  */
-exports.createProductTypesPersistence = async () => {
+exports.createProductTypes = async () => {
   try {
     const productTypesCount = await ProductType.countDocuments();
     console.log("productTypesCount", productTypesCount);

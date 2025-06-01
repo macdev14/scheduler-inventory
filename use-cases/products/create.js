@@ -51,7 +51,7 @@ const validations = async (product) => {
  * @param {string} product.token - Token
  * @returns {Object} - Status and message
  */
-exports.productCreatePersistence = async (product) => {
+exports.productsCreate = async (product) => {
   try {
     const decoded = jwt.verify(product.token, process.env.SECRET_KEY);
 

@@ -1,33 +1,33 @@
 const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
-require("../../framework/db/mongoDB/models/stockModel");
-const Stock = mongoose.model("Stock");
+require("../../framework/db/mongoDB/models/productModel");
+const Product = mongoose.model("Product");
 
-exports.stockReadPersistence = async () => {
+exports.productsGet = async () => {
   try {
     // const decoded = jwt.verify(token, process.env.SECRET_KEY);
 
     // if (decoded.role == process.env.ROLE_ADMIN || decoded.role == process.env.ROLE_MANAGER) {
 
-    const stocks = await Stock.find({ active: true });
+    const products = await Product.find({ active: true });
 
     // if (!products  products.length === 0) {
     //     return { status: 404, message: "Products not found." };
     // }
 
-    return { success: true, status: 200, data: stocks };
+    return { success: true, status: 200, data: products };
     // }
   } catch (error) {
     return { success: false, status: 500, message: "Something went wrong." };
   }
 };
 
-exports.stockIdReadPersistence = async (product_id) => {
+exports.productsGetById = async (id) => {
   try {
-    const stock = await Stock.find({ product_id: product_id });
-
-    return { success: true, status: 200, data: stock };
+    const product = await Product.find({ id: id });
+    console.log("product", product);
+    return { success: true, status: 200, data: product };
   } catch (error) {
     return { success: false, status: 500, message: "Something went wrong." };
   }

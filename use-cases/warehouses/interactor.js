@@ -2,18 +2,18 @@
 
 const { WarehouseEntity } = require("../../entities/WarehouseEntity");
 
-exports.warehouseRead = async ({ warehouseReadPersistence }) => {
+exports.getWarehouses = async ({ warehousesGet }) => {
   try {
-    const warehouses = await warehouseReadPersistence();
+    const warehouses = await warehousesGet();
     return warehouses;
   } catch (error) {
     return { success: false, status: 500, message: "Something went wrong." };
   }
 };
 
-exports.warehouseReadId = async ({ warehouseIdReadPersistence }, id) => {
+exports.getWarehousesById = async ({ warehousesGetById }, id) => {
   try {
-    const warehouse = await warehouseIdReadPersistence(id);
+    const warehouse = await warehousesGetById(id);
 
     return warehouse;
   } catch (error) {

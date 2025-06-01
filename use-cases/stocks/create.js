@@ -21,25 +21,42 @@ const validations = async (stock) => {
     };
   }
 
+  if (!stock.quantity) {
+    return {
+      success: false,
+      status: 400,
+      message: "Quantity is required.",
+    };
+  }
+
+  if (stock.quantity < 0) {
+    return {
+      success: false,
+      status: 400,
+      message: "Quantity cannot be negative.",
+    };
+  }
+
   const stockExists = await Stock.findOne({
     product_id: stock.product_id,
     warehouse_id: stock.warehouse_id,
   });
 
-  if (!stockExists) {
+  if (stockExists) {
     return {
       success: false,
-      status: 404,
-      message: "Product stock not exists.",
+      status: 400,
+      message: "Product stock already exists.",
     };
   }
 
   return { success: true };
 };
 
-exports.stockDeletePersistence = async (stock) => {
+exports.stocksCreate = async (stock) => {
   try {
     const decoded = jwt.verify(stock.token, process.env.SECRET_KEY);
+
     if (
       decoded.role == process.env.ROLE_ADMIN ||
       decoded.role == process.env.ROLE_MANAGER
@@ -52,18 +69,29 @@ exports.stockDeletePersistence = async (stock) => {
         return validationResult;
       }
 
-      const response = await Stock.findOneAndDelete({
-        product_id: stock.product_id,
-        warehouse_id: stock.warehouse_id,
-      });
+      const response = await Stock.create(stock);
 
       if (!response || response.length === 0) {
         return { status: 404, message: "Product stock not found." };
       }
 
-      return { success: true, status: 200, data: response };
+      return {
+        success: true,
+        status: 200,
+        message: "Stock product created successfully.",
+      };
     }
   } catch (error) {
-    return { success: false, status: 500, message: "Something went wrong." };
+    console.log("error", error);
+
+    if (error.code === 11000) {
+      return {
+        success: false,
+        status: 400,
+        message: "Stock product already exists.",
+      };
+    }
+
+    return { success: false, status: 500, message: "Something went wrong" };
   }
 };

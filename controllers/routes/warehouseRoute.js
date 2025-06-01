@@ -1,11 +1,8 @@
-const warehouseInteractorMongoDB = require("../../use-cases/warehouses/interactorMongoDB");
+const interactor = require("../../use-cases/warehouses/interactor");
 const fs = require("fs");
 const router = require("express").Router();
 
-const {
-  warehouseReadPersistence,
-  warehouseIdReadPersistence,
-} = require("../../use-cases/warehouses/readPersistence");
+const { warehousesGet, warehousesGetById } = require("../../use-cases/warehouses/get");
 
 /**
  * @api {get} /warehouse/all Get all warehouse entries
@@ -16,10 +13,10 @@ const {
  * @apiSuccess {Object[]} Array of warehouse entries
  * @apiError {Error} 500 Internal Server Error
  */
-router.route("/warehouse/all").get(async (req, res) => {
+router.route("/warehouses").get(async (req, res) => {
   try {
-    const warehouses = await warehouseInteractorMongoDB.warehouseRead({
-      warehouseReadPersistence,
+    const warehouses = await interactor.getWarehouses({
+      warehousesGet,
     });
     res.status(warehouses.status).send(warehouses);
   } catch (error) {
@@ -38,11 +35,11 @@ router.route("/warehouse/all").get(async (req, res) => {
  * @apiError {Error} 404 Warehouse not found
  * @apiError {Error} 500 Internal Server Error
  */
-router.route("/warehouse").get(async (req, res) => {
-  const id = req.query.id;
+router.route("/warehouses/:id").get(async (req, res) => {
+  const id = req.params.id;
   try {
-    const warehouse = await warehouseInteractorMongoDB.warehouseReadId(
-      { warehouseIdReadPersistence },
+    const warehouse = await interactor.getWarehousesById(
+      { warehousesGetById },
       id
     );
     res.status(warehouse.status).send(warehouse);

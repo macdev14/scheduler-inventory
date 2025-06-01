@@ -42,18 +42,18 @@ const validations = async (stock) => {
     warehouse_id: stock.warehouse_id,
   });
 
-  if (stockExists) {
+  if (!stockExists) {
     return {
       success: false,
       status: 400,
-      message: "Product stock already exists.",
+      message: "Product stock not exists.",
     };
   }
 
   return { success: true };
 };
 
-exports.stockCreatePersistence = async (stock) => {
+exports.stocksUpdate = async (stock) => {
   try {
     const decoded = jwt.verify(stock.token, process.env.SECRET_KEY);
 
@@ -69,29 +69,19 @@ exports.stockCreatePersistence = async (stock) => {
         return validationResult;
       }
 
-      const response = await Stock.create(stock);
+      const updatedStock = await Stock.findOneAndUpdate(
+        { product_id: stock.product_id, warehouse_id: stock.warehouse_id },
+        stock,
+        { new: true }
+      );
 
-      if (!response || response.length === 0) {
+      if (!updatedStock || updatedStock.length === 0) {
         return { status: 404, message: "Product stock not found." };
       }
 
-      return {
-        success: true,
-        status: 200,
-        message: "Stock product created successfully.",
-      };
+      return { success: true, status: 200, data: updatedStock };
     }
   } catch (error) {
-    console.log("error", error);
-
-    if (error.code === 11000) {
-      return {
-        success: false,
-        status: 400,
-        message: "Stock product already exists.",
-      };
-    }
-
-    return { success: false, status: 500, message: "Something went wrong" };
+    return { success: false, status: 500, message: "Something went wrong." };
   }
 };

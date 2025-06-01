@@ -4,7 +4,7 @@ require("dotenv").config();
 require("../../framework/db/mongoDB/models/productTypeModel");
 const ProductType = mongoose.model("ProductType");
 
-exports.productTypeReadPersistence = async () => {
+exports.productTypesGet = async () => {
   try {
     const productTypes = await ProductType.find({ active: true });
     return { success: true, status: 200, data: productTypes };
@@ -13,7 +13,7 @@ exports.productTypeReadPersistence = async () => {
   }
 };
 
-exports.productTypeIdReadPersistence = async (id) => {
+exports.productTypesGetById = async (id) => {
   try {
     const productType = await ProductType.find({ id: id });
     return { success: true, status: 200, data: productType };

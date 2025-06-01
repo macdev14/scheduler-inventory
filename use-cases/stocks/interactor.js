@@ -2,8 +2,8 @@
 
 const { StockJwtEntity } = require("../../entities/StockJwtEntity");
 
-exports.stockCreate = async (
-  { stockCreatePersistence },
+exports.createStocks = async (
+  { stocksCreate },
   { product_id, warehouse_id, quantity, token }
 ) => {
   try {
@@ -18,7 +18,7 @@ exports.stockCreate = async (
 
     console.log("stock", stock);
 
-    const createStock = await stockCreatePersistence(stock);
+    const createStock = await stocksCreate(stock);
 
     return createStock;
   } catch (error) {
@@ -35,18 +35,18 @@ exports.stockCreate = async (
   }
 };
 
-exports.stockRead = async ({ stockReadPersistence }) => {
+exports.getStocks = async ({ stocksGet }) => {
   try {
-    const stocks = await stockReadPersistence();
+    const stocks = await stocksGet();
     return stocks;
   } catch (error) {
     return { success: false, status: 500, message: "Something went wrong." };
   }
 };
 
-exports.stockReadId = async ({ stockIdReadPersistence }, product_id) => {
+exports.getStocksByProductId = async ({ stocksGetByProductId }, product_id) => {
   try {
-    const product = await stockIdReadPersistence(product_id);
+    const product = await stocksGetByProductId(product_id);
 
     return product;
   } catch (error) {
@@ -54,18 +54,18 @@ exports.stockReadId = async ({ stockIdReadPersistence }, product_id) => {
   }
 };
 
-exports.stockDelete = async ({ stockDeletePersistence }, stock) => {
+exports.deleteStocks = async ({ stocksDelete }, stock) => {
   try {
-    const stockDeleted = await stockDeletePersistence(stock);
+    const stockDeleted = await stocksDelete(stock);
     return stockDeleted;
   } catch (error) {
     return { success: false, status: 500, message: "Something went wrong." };
   }
 };
 
-exports.stockUpdate = async ({ stockUpdatePersistence }, stock) => {
+exports.updateStocks = async ({ stocksUpdate }, stock) => {
   try {
-    const updatedStock = await stockUpdatePersistence(stock);
+    const updatedStock = await stocksUpdate(stock);
     return updatedStock;
   } catch (error) {
     return { success: false, status: 500, message: "Something went wrong." };

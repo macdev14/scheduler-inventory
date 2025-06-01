@@ -2,8 +2,8 @@
 
 const { ProductJwtEntity } = require("../../entities/ProductJwtEntity");
 
-exports.productCreate = async (
-  { productCreatePersistence },
+exports.createProducts = async (
+  { productsCreate },
   { id, name, product_type_id, image_url, token }
 ) => {
   try {
@@ -19,7 +19,7 @@ exports.productCreate = async (
 
     console.log("product", product);
 
-    const createProduct = await productCreatePersistence(product);
+    const createProduct = await productsCreate(product);
 
     return createProduct;
   } catch (error) {
@@ -36,18 +36,18 @@ exports.productCreate = async (
   }
 };
 
-exports.productRead = async ({ productReadPersistence }) => {
+exports.getProducts = async ({ productsGet }) => {
   try {
-    const products = await productReadPersistence();
+    const products = await productsGet();
     return products;
   } catch (error) {
     return { success: false, status: 500, message: "Something went wrong." };
   }
 };
 
-exports.productReadId = async ({ productIdReadPersistence }, id) => {
+exports.getProductsById = async ({ productsGetById }, id) => {
   try {
-    const product = await productIdReadPersistence(id);
+    const product = await productsGetById(id);
 
     return product;
   } catch (error) {
@@ -55,18 +55,18 @@ exports.productReadId = async ({ productIdReadPersistence }, id) => {
   }
 };
 
-exports.productDelete = async ({ productDeletePersistence }, id) => {
+exports.deleteProducts = async ({ productsDelete }, id) => {
   try {
-    const product = await productDeletePersistence(id);
+    const product = await productsDelete(id);
     return product;
   } catch (error) {
     return { success: false, status: 500, message: "Something went wrong." };
   }
 };
 
-exports.productUpdate = async ({ productUpdatePersistence }, product) => {
+exports.updateProducts = async ({ productsUpdate }, product) => {
   try {
-    const updatedProduct = await productUpdatePersistence(product);
+    const updatedProduct = await productsUpdate(product);
     return updatedProduct;
   } catch (error) {
     return { success: false, status: 500, message: "Something went wrong." };

@@ -4,14 +4,20 @@ const path = require("path");
 require("dotenv").config();
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
-const { createProductTypesPersistence } = require("./use-cases/product_types/createProductTypesPersistence");
-const productTypeInteractorMongoDB = require("./use-cases/product_types/interactorMongoDB");
+const { createProductTypes } = require("./use-cases/product_types/create");
+const productTypeInteractor = require("./use-cases/product_types/interactor");
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./public/apidocjs/swagger.json');
+const cors = require('cors');
 
 const app = express();
 let port = process.env.PORT || 3000;
 let uri = process.env.MONGO_CONNECTION_STRING;
+
+app.use(cors({
+  origin: process.env.REACT_URL || 'http://localhost:3000',
+  credentials: true
+}));
 
 //database connection
 mongoose
@@ -20,7 +26,7 @@ mongoose
     console.log("Connected to the database");
     (async () => {
       try {
-          const productTypes = await productTypeInteractorMongoDB.createProductTypes({createProductTypesPersistence}, {});
+          const productTypes = await productTypeInteractor.createDefaultProductTypes({createProductTypes}, {});
           console.log(productTypes);
       } catch (err) {
           console.log("err", err);
@@ -34,14 +40,15 @@ mongoose
 app.use(bodyParser.json()); //parse application/json and application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: true })); //allowing for extended syntax (i.e. arrays, objects, nested objects, etc.)
 
+const api_v01 = '/api/v01/';
 //routes
 app.use("/", express.static(path.join(__dirname, "public"))); 
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument)); //serve api documentation
-app.use("/api-docjs", express.static("./public/apidocjs"));
-app.use("/api", require("./controllers/routes/productRoute")); //product route
-app.use("/api", require("./controllers/routes/productTypeRoute")); //product types route
-app.use("/api", require("./controllers/routes/warehouseRoute")); //warehouse route
-app.use("/api", require("./controllers/routes/stockRoute")); //stock route
+app.use(api_v01 + 'docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument)); //serve api documentation
+app.use(api_v01 + 'docjs', express.static("./public/apidocjs"));
+app.use(api_v01, require("./controllers/routes/productRoute")); //product route
+app.use(api_v01, require("./controllers/routes/productTypeRoute")); //product types route
+app.use(api_v01, require("./controllers/routes/warehouseRoute")); //warehouse route
+app.use(api_v01, require("./controllers/routes/stockRoute")); //stock route
 
 app.listen(port, () => {
   console.log("Server running on port: " + port);

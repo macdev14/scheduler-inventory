@@ -1,25 +1,13 @@
-const productInteractorMongoDB = require("../../use-cases/products/interactorMongoDB");
+const interactor = require("../../use-cases/products/interactor");
 const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
 const router = require("express").Router();
 
-const {
-  productCreatePersistence,
-} = require("../../use-cases/products/createPersistence");
-
-const {
-  productReadPersistence,
-  productIdReadPersistence,
-} = require("../../use-cases/products/readPersistence");
-
-const {
-  productDeletePersistence,
-} = require("../../use-cases/products/deletePersistence");
-
-const {
-  productUpdatePersistence,
-} = require("../../use-cases/products/updatePersistence");
+const { productsCreate } = require("../../use-cases/products/create");
+const { productsGet, productsGetById } = require("../../use-cases/products/get");
+const { productsDelete } = require("../../use-cases/products/delete");
+const { productsUpdate } = require("../../use-cases/products/update");
 
 let fileName = "";
 const storage = multer.diskStorage({
@@ -49,7 +37,7 @@ const upload = multer({ storage });
  * @apiError {Error} 400 Product already exists
  * @apiError {Error} 500 Internal Server Error
  */
-router.route("/product").post(upload.single("image_url"), async (req, res) => {
+router.route("/products").post(upload.single("image_url"), async (req, res) => {
   //const image_url = path.extname(req.file.originalname);
   //const image_url = req.file.originalname;
   const image_url = fileName;
@@ -57,8 +45,8 @@ router.route("/product").post(upload.single("image_url"), async (req, res) => {
   const { id, name, product_type_id } = req.body;
   console.log("TOKEN:", token);
   try {
-    const product = await productInteractorMongoDB.productCreate(
-      { productCreatePersistence },
+    const product = await interactor.createProducts(
+      { productsCreate },
       { id, name, product_type_id, image_url, token }
     );
     res.status(product.status).send(product);
@@ -68,7 +56,7 @@ router.route("/product").post(upload.single("image_url"), async (req, res) => {
 });
 
 /**
- * @api {get} /product/all Get all product entries
+ * @api {get} /products Get all product entries
  * @apiName GetProductAll
  * @apiGroup Products
  * @apiVersion 1.0.0
@@ -76,11 +64,11 @@ router.route("/product").post(upload.single("image_url"), async (req, res) => {
  * @apiSuccess {Object[]} Array of product entries
  * @apiError {Error} 500 Internal Server Error
  */
-router.route("/product/all").get(async (req, res) => {
+router.route("/products").get(async (req, res) => {
   /******  0a098c67-5179-491a-9932-f091f5d7fab5  *******/
   try {
-    const products = await productInteractorMongoDB.productRead({
-      productReadPersistence,
+    const products = await interactor.getProducts({
+      productsGet,
     });
     res.status(products.status).send(products);
   } catch (error) {
@@ -98,12 +86,12 @@ router.route("/product/all").get(async (req, res) => {
  * @apiError {Error} 404 Product not found
  * @apiError {Error} 500 Internal Server Error
  */
-router.route("/product").get(async (req, res) => {
-  const id = req.query.id;
+router.route("/products/:id").get(async (req, res) => {
+  const id = req.params.id;
 
   try {
-    const product = await productInteractorMongoDB.productReadId(
-      { productIdReadPersistence },
+    const product = await interactor.getProductsById(
+      { productsGetById },
       id
     );
     res.status(product.status).send(product);
@@ -123,13 +111,13 @@ router.route("/product").get(async (req, res) => {
  * @apiError {Error} 400 Product already exists
  * @apiError {Error} 500 Internal Server Error
  */
-router.route("/product").delete(async (req, res) => {
+router.route("/products").delete(async (req, res) => {
   const token = req.headers["token"];
   const { id } = req.body;
 
   try {
-    const product = await productInteractorMongoDB.productDelete(
-      { productDeletePersistence },
+    const product = await interactor.deleteProducts(
+      { productsDelete, },
       { id, token }
     );
 
@@ -153,15 +141,15 @@ router.route("/product").delete(async (req, res) => {
  * @apiError {Error} 400 Product already exists
  * @apiError {Error} 500 Internal Server Error
  */
-router.route("/product").put(upload.single("image_url"), async (req, res) => {
+router.route("/products").put(upload.single("image_url"), async (req, res) => {
   const token = req.headers["token"];
 
   const image_url = fileName;
   const { id, name, product_type_id } = req.body;
 
   try {
-    const product = await productInteractorMongoDB.productUpdate(
-      { productUpdatePersistence },
+    const product = await interactor.updateProducts(
+      { productsUpdate },
       { id, name, product_type_id, image_url, token }
     );
     res.status(product.status).send(product);

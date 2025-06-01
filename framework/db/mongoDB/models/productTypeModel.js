@@ -15,7 +15,7 @@ const productTypeSchema = new Schema(
 productTypeSchema.statics.type_1 = async function () {
   try {
       const productType = {
-          id: 1,
+          //id: 1,
           name: 'Mobiliário',
           active: true
       };

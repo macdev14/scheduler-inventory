@@ -1,22 +1,22 @@
-const stockInteractorMongoDB = require("../../use-cases/stocks/interactorMongoDB");
+const interactor = require("../../use-cases/stocks/interactor");
 const router = require("express").Router();
 
 const {
-  stockCreatePersistence,
-} = require("../../use-cases/stocks/createPersistence");
+  stocksCreate,
+} = require("../../use-cases/stocks/create");
 
 const {
-  stockReadPersistence,
-  stockIdReadPersistence,
-} = require("../../use-cases/stocks/readPersistence");
+  stocksGet,
+  stocksGetByProductId,
+} = require("../../use-cases/stocks/get");
 
 const {
-  stockDeletePersistence,
-} = require("../../use-cases/stocks/deletePersistence");
+  stocksDelete,
+} = require("../../use-cases/stocks/delete");
 
 const {
-  stockUpdatePersistence,
-} = require("../../use-cases/stocks/updatePersistence");
+  stocksUpdate,
+} = require("../../use-cases/stocks/update");
 
 
 /**
@@ -37,8 +37,8 @@ router.route("/stock").post(async (req, res) => {
   const { product_id, warehouse_id, quantity } = req.body;
 
   try {
-    const stock = await stockInteractorMongoDB.stockCreate(
-      { stockCreatePersistence },
+    const stock = await interactor.updateStocks(
+      { stocksCreate },
       { product_id, warehouse_id, quantity, token }
     );
     res.status(stock.status).send(stock);
@@ -48,17 +48,17 @@ router.route("/stock").post(async (req, res) => {
 });
 
 /**
- * @api {get} /stock/all Get all stock entries
+ * @api {get} /stocks Get all stock entries
  * @apiName GetStockAll
  * @apiGroup Stocks
  * @apiPermission authenticated user
  * @apiSuccess {Object[]} Array of stock entries
  * @apiError {Error} 500 Internal Server Error
  */
-router.route("/stock/all").get(async (req, res) => {
+router.route("/stocks").get(async (req, res) => {
   try {
-    const stocks = await stockInteractorMongoDB.stockRead({
-      stockReadPersistence,
+    const stocks = await interactor.getStocks({
+      stocksGet,
     });
     res.status(stocks.status).send(stocks);
   } catch (error) {
@@ -67,7 +67,7 @@ router.route("/stock/all").get(async (req, res) => {
 });
 
 /**
- * @api {get} /stock Get a stock entry by product ID
+ * @api {get} /stocks/byProductId Get a stock entry by product ID
  * @apiName GetStock
  * @apiGroup Stocks
  * @apiPermission authenticated user
@@ -76,12 +76,12 @@ router.route("/stock/all").get(async (req, res) => {
  * @apiError {Error} 404 Stock not found
  * @apiError {Error} 500 Internal Server Error
  */
-router.route("/stock").get(async (req, res) => {
+router.route("/stocks/byProductId").get(async (req, res) => {
   const product_id = req.query.product_id;
 
   try {
-    const stock = await stockInteractorMongoDB.stockReadId(
-      { stockIdReadPersistence },
+    const stock = await interactor.getStocksByProductId(
+      { stocksGetByProductId },
       product_id
     );
     res.status(stock.status).send(stock);
@@ -102,13 +102,13 @@ router.route("/stock").get(async (req, res) => {
  * @apiError {Error} 400 Stock already exists
  * @apiError {Error} 500 Internal Server Error
  */
-router.route("/stock").delete(async (req, res) => {
+router.route("/stocks").delete(async (req, res) => {
   const token = req.headers["token"];
   const { product_id, warehouse_id } = req.body;
 
   try {
-    const stock = await stockInteractorMongoDB.stockDelete(
-      { stockDeletePersistence },
+    const stock = await interactor.deleteStocks(
+      { stocksDelete },
       { product_id, warehouse_id, token }
     );
     res.status(stock.status).send(stock);
@@ -130,13 +130,13 @@ router.route("/stock").delete(async (req, res) => {
  * @apiError {Error} 400 Stock already exists
  * @apiError {Error} 500 Internal Server Error
  */
-router.route("/stock").put(async (req, res) => {
+router.route("/stocks").put(async (req, res) => {
   const token = req.headers["token"];
   const { product_id, warehouse_id, quantity } = req.body;
 
   try {
-    const stock = await stockInteractorMongoDB.stockUpdate(
-      { stockUpdatePersistence },
+    const stock = await interactor.updateStocks(
+      { stocksUpdate },
       { product_id, warehouse_id, quantity, token }
     );
     res.status(stock.status).send(stock);

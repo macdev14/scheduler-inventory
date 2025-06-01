@@ -23,12 +23,29 @@ const validations = async (product) => {
     };
   }
 
+  if (!product.name) {
+    return {
+      success: false,
+      status: 400,
+      message: "Product name is required.",
+    };
+  }
+
+  if (!product.product_type_id) {
+    return {
+      success: false,
+      status: 400,
+      message: "Product type id is required.",
+    };
+  }
+
   return { success: true };
 };
 
-exports.productDeletePersistence = async (product) => {
+exports.productsUpdate = async (product) => {
   try {
     const decoded = jwt.verify(product.token, process.env.SECRET_KEY);
+
     if (
       decoded.role == process.env.ROLE_ADMIN ||
       decoded.role == process.env.ROLE_MANAGER
@@ -41,13 +58,17 @@ exports.productDeletePersistence = async (product) => {
         return validationResult;
       }
 
-      const productDeleted = await Product.findOneAndDelete({ id: product.id });
+      const updatedProduct = await Product.findOneAndUpdate(
+        { id: product.id },
+        product,
+        { new: true }
+      );
 
-      if (!productDeleted || productDeleted.length === 0) {
+      if (!updatedProduct || updatedProduct.length === 0) {
         return { status: 404, message: "Product not found." };
       }
 
-      return { success: true, status: 200, data: productDeleted };
+      return { success: true, status: 200, data: updatedProduct };
     }
   } catch (error) {
     return { success: false, status: 500, message: "Something went wrong." };
