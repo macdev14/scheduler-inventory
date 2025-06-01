@@ -37,11 +37,9 @@ exports.createProductTypes = async () => {
 
     return { status: 201, message: "Product types created successfully" };
   } catch (error) {
-    console.log(error.message);
-    return {
-      status: 500,
-      message: "Something went wrong during event type creation",
-      error: error.message,
-    };
+    console.log("error", error);
+
+    // Fallback error response
+    return ({ status: 500, message: "Something went wrong" });
   }
 };

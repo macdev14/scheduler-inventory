@@ -7,17 +7,23 @@ const ProductType = mongoose.model("ProductType");
 exports.productTypesGet = async () => {
   try {
     const productTypes = await ProductType.find({ active: true });
-    return { success: true, status: 200, data: productTypes };
+    return { status: 200, data: productTypes };
   } catch (error) {
-    return { success: false, status: 500, message: "Something went wrong." };
+    console.log("error", error);
+
+    // Fallback error response
+    return ({ status: 500, message: "Something went wrong" });
   }
 };
 
 exports.productTypesGetById = async (id) => {
   try {
     const productType = await ProductType.find({ id: id });
-    return { success: true, status: 200, data: productType };
+    return { status: 200, data: productType };
   } catch (error) {
-    return { success: false, status: 500, message: "Something went wrong." };
+    console.log("error", error);
+
+    // Fallback error response
+    return ({ status: 500, message: "Something went wrong" });
   }
 };

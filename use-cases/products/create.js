@@ -5,41 +5,12 @@ require("../../framework/db/mongoDB/models/productModel");
 const Product = mongoose.model("Product");
 
 const validations = async (product) => {
-  if (!product.id) {
-    return {
-      success: false,
-      status: 400,
-      message: "Product id is required.",
-    };
-  }
-
+  if (!product.id) return { status: 400, message: "Product id is required." };
   const productExists = await Product.findOne({ id: product.id });
+  if (productExists) return { status: 400, message: "Product already exists." };
+  if (!product.name) return { status: 400, message: "Product name is required." };
+  if (!product.product_type_id) return { status: 400, message: "Product type id is required." };
 
-  if (productExists) {
-    return {
-      success: false,
-      status: 400,
-      message: "Product already exists.",
-    };
-  }
-
-  if (!product.name) {
-    return {
-      success: false,
-      status: 400,
-      message: "Product name is required.",
-    };
-  }
-
-  if (!product.product_type_id) {
-    return {
-      success: false,
-      status: 400,
-      message: "Product type id is required.",
-    };
-  }
-
-  return { success: true };
 };
 
 /**
@@ -62,10 +33,8 @@ exports.productsCreate = async (product) => {
       // Validations
       let validationResult = await validations(product);
 
-      if (validationResult.success === false) {
-        // se houver erros, retornar os erros
-        return validationResult;
-      }
+      if (validationResult.success === false) return validationResult;
+
       const response = await Product.create(product);
 
       if (!response || response.length === 0) {
@@ -73,7 +42,6 @@ exports.productsCreate = async (product) => {
       }
 
       return {
-        success: true,
         status: 200,
         message: "Product created successfully.",
       };
@@ -81,14 +49,12 @@ exports.productsCreate = async (product) => {
   } catch (error) {
     console.log("error", error);
 
+    // If the user already exists (duplicate key error in MongoDB)
     if (error.code === 11000) {
-      return {
-        success: false,
-        status: 400,
-        message: "Product already exists.",
-      };
+      return ({ status: 400, message: "user already exists" });
     }
 
-    return { success: false, status: 500, message: "Something went wrong." };
+    // Fallback error response
+    return ({ status: 500, message: "Something went wrong" });
   }
 };

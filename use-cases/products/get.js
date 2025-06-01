@@ -16,10 +16,13 @@ exports.productsGet = async () => {
     //     return { status: 404, message: "Products not found." };
     // }
 
-    return { success: true, status: 200, data: products };
+    return { status: 200, data: products };
     // }
   } catch (error) {
-    return { success: false, status: 500, message: "Something went wrong." };
+    console.log("error", error);
+
+    // Fallback error response
+    return ({ status: 500, message: "Something went wrong" });
   }
 };
 
@@ -27,8 +30,11 @@ exports.productsGetById = async (id) => {
   try {
     const product = await Product.find({ id: id });
     console.log("product", product);
-    return { success: true, status: 200, data: product };
+    return { status: 200, data: product };
   } catch (error) {
-    return { success: false, status: 500, message: "Something went wrong." };
+    console.log("error", error);
+
+    // Fallback error response
+    return ({ status: 500, message: "Something went wrong" });
   }
 };

@@ -32,7 +32,10 @@ exports.createProducts = async (
         message: "Product already exists.",
       };
     }
-    return { success: false, status: 500, message: "Something went wrong." };
+    res.status(500).send({
+      status: 500,
+      message: 'An error occurred: ' + error,
+    });
   }
 };
 
@@ -41,7 +44,10 @@ exports.getProducts = async ({ productsGet }) => {
     const products = await productsGet();
     return products;
   } catch (error) {
-    return { success: false, status: 500, message: "Something went wrong." };
+    res.status(500).send({
+      status: 500,
+      message: 'An error occurred: ' + error,
+    });
   }
 };
 
@@ -51,7 +57,10 @@ exports.getProductsById = async ({ productsGetById }, id) => {
 
     return product;
   } catch (error) {
-    return { success: false, status: 500, message: "Something went wrong." };
+    res.status(500).send({
+      status: 500,
+      message: 'An error occurred: ' + error,
+    });
   }
 };
 
@@ -60,7 +69,10 @@ exports.deleteProducts = async ({ productsDelete }, id) => {
     const product = await productsDelete(id);
     return product;
   } catch (error) {
-    return { success: false, status: 500, message: "Something went wrong." };
+    res.status(500).send({
+      status: 500,
+      message: 'An error occurred: ' + error,
+    });
   }
 };
 
@@ -69,6 +81,9 @@ exports.updateProducts = async ({ productsUpdate }, product) => {
     const updatedProduct = await productsUpdate(product);
     return updatedProduct;
   } catch (error) {
-    return { success: false, status: 500, message: "Something went wrong." };
+    res.status(500).send({
+      status: 500,
+      message: 'An error occurred: ' + error,
+    });
   }
 };

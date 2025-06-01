@@ -5,41 +5,14 @@ require("../../framework/db/mongoDB/models/productModel");
 const Product = mongoose.model("Product");
 
 const validations = async (product) => {
-  if (!product.id) {
-    return {
-      success: false,
-      status: 400,
-      message: "Product id is required.",
-    };
-  }
+  if (!product.id) return { status: 400, message: "Product id is required." };
 
   const productExists = await Product.findOne({ id: product.id });
 
-  if (!productExists) {
-    return {
-      success: false,
-      status: 404,
-      message: "Product not exists.",
-    };
-  }
+  if (!productExists) return { status: 404, message: "Product not exists." };
+  if (!product.name) return { status: 400, message: "Product name is required." };
+  if (!product.product_type_id) return { status: 400, message: "Product type id is required." };
 
-  if (!product.name) {
-    return {
-      success: false,
-      status: 400,
-      message: "Product name is required.",
-    };
-  }
-
-  if (!product.product_type_id) {
-    return {
-      success: false,
-      status: 400,
-      message: "Product type id is required.",
-    };
-  }
-
-  return { success: true };
 };
 
 exports.productsUpdate = async (product) => {
@@ -53,10 +26,7 @@ exports.productsUpdate = async (product) => {
       // Validations
       let validationResult = await validations(product);
 
-      if (validationResult.success === false) {
-        // se houver erros, retornar os erros
-        return validationResult;
-      }
+      if (validationResult) return validationResult;
 
       const updatedProduct = await Product.findOneAndUpdate(
         { id: product.id },
@@ -68,9 +38,12 @@ exports.productsUpdate = async (product) => {
         return { status: 404, message: "Product not found." };
       }
 
-      return { success: true, status: 200, data: updatedProduct };
+      return { status: 200, data: updatedProduct };
     }
   } catch (error) {
-    return { success: false, status: 500, message: "Something went wrong." };
+    console.log("error", error);
+
+    // Fallback error response
+    return ({ status: 500, message: "Something went wrong" });
   }
 };

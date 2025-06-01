@@ -7,17 +7,23 @@ const Warehouse = mongoose.model("Warehouse");
 exports.warehousesGet = async () => {
   try {
     const warehouses = await Warehouse.find();
-    return { success: true, status: 200, data: warehouses };
+    return { status: 200, data: warehouses };
   } catch (error) {
-    return { success: false, status: 500, message: "Something went wrong." };
+    console.log("error", error);
+
+    // Fallback error response
+    return ({ status: 500, message: "Something went wrong" });
   }
 };
 
 exports.warehousesGetById = async (id) => {
   try {
     const warehouse = await Warehouse.find({ id: id });
-    return { success: true, status: 200, data: warehouse };
+    return { status: 200, data: warehouse };
   } catch (error) {
-    return { success: false, status: 500, message: "Something went wrong." };
+    console.log("error", error);
+
+    // Fallback error response
+    return ({ status: 500, message: "Something went wrong" });
   }
 };

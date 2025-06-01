@@ -5,37 +5,10 @@ require("../../framework/db/mongoDB/models/stockModel");
 const Stock = mongoose.model("Stock");
 
 const validations = async (stock) => {
-  if (!stock.product_id) {
-    return {
-      success: false,
-      status: 400,
-      message: "Product id is required.",
-    };
-  }
-
-  if (!stock.warehouse_id) {
-    return {
-      success: false,
-      status: 400,
-      message: "Warehouse id is required.",
-    };
-  }
-
-  if (!stock.quantity) {
-    return {
-      success: false,
-      status: 400,
-      message: "Quantity is required.",
-    };
-  }
-
-  if (stock.quantity < 0) {
-    return {
-      success: false,
-      status: 400,
-      message: "Quantity cannot be negative.",
-    };
-  }
+  if (!stock.product_id) return { status: 400, message: "Product id is required." };
+  if (!stock.warehouse_id) return { status: 400, message: "Warehouse id is required." };
+  if (!stock.quantity) return { status: 400, message: "Quantity is required." };
+  if (stock.quantity < 0) return { status: 400, message: "Quantity cannot be negative." };
 
   const stockExists = await Stock.findOne({
     product_id: stock.product_id,
@@ -44,7 +17,6 @@ const validations = async (stock) => {
 
   if (!stockExists) {
     return {
-      success: false,
       status: 400,
       message: "Product stock not exists.",
     };
@@ -79,9 +51,12 @@ exports.stocksUpdate = async (stock) => {
         return { status: 404, message: "Product stock not found." };
       }
 
-      return { success: true, status: 200, data: updatedStock };
+      return { status: 200, data: updatedStock };
     }
   } catch (error) {
-    return { success: false, status: 500, message: "Something went wrong." };
+    console.log("error", error);
+
+    // Fallback error response
+    return ({ status: 500, message: "Something went wrong" });
   }
 };

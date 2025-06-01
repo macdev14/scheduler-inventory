@@ -5,7 +5,10 @@ exports.getProductTypes = async ({ productTypesGet }) => {
     const productTypes = await productTypesGet();
     return productTypes;
   } catch (error) {
-    return { success: false, status: 500, message: "Something went wrong." };
+    res.status(500).send({
+      status: 500,
+      message: 'An error occurred: ' + error,
+    });
   }
 };
 
@@ -15,15 +18,21 @@ exports.getProductTypeById = async ({ productTypesGetById }, id) => {
 
     return productType;
   } catch (error) {
-    return { success: false, status: 500, message: "Something went wrong." };
+    res.status(500).send({
+      status: 500,
+      message: 'An error occurred: ' + error,
+    });
   }
 };
-exports.createDefaultProductTypes = async ({ createProductTypes }, {}) => {
+exports.createDefaultProductTypes = async ({ createProductTypes }, { }) => {
   try {
     console.log("createProductTypes", createProductTypes);
     const productType = await createProductTypes();
     return productType;
   } catch (error) {
-    return { success: false, status: 500, message: "Something went wrong." };
+    res.status(500).send({
+      status: 500,
+      message: 'An error occurred: ' + error,
+    });
   }
 };

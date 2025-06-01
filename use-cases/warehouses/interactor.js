@@ -7,7 +7,10 @@ exports.getWarehouses = async ({ warehousesGet }) => {
     const warehouses = await warehousesGet();
     return warehouses;
   } catch (error) {
-    return { success: false, status: 500, message: "Something went wrong." };
+    res.status(500).send({
+      status: 500,
+      message: 'An error occurred: ' + error,
+    });
   }
 };
 
@@ -17,6 +20,9 @@ exports.getWarehousesById = async ({ warehousesGetById }, id) => {
 
     return warehouse;
   } catch (error) {
-    return { success: false, status: 500, message: "Something went wrong." };
+    res.status(500).send({
+      status: 500,
+      message: 'An error occurred: ' + error,
+    });
   }
 };
