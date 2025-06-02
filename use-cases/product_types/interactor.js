@@ -1,8 +1,8 @@
 "use strict";
 
-exports.getProductTypes = async ({ productTypesGet }) => {
+exports.getProductTypes = async ({ productTypesGet }, {token, page, limit, search}) => {
   try {
-    const productTypes = await productTypesGet();
+    const productTypes = await productTypesGet({token, page, limit, search});
     return productTypes;
   } catch (error) {
     res.status(500).send({

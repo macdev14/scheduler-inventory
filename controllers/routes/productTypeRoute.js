@@ -1,10 +1,10 @@
 const interactor = require("../../use-cases/product_types/interactor");
 const router = require("express").Router();
-const { productTypesGet, productTypesGetById,} = require("../../use-cases/product_types/get");
+const { productTypesGet, productTypesGetById, } = require("../../use-cases/product_types/get");
 
 
 /**
- * @api {get} /productType/all Get all product types
+ * @api {get} /productTypes Get all product types
  * @apiName GetProductTypesAll
  * @apiGroup ProductTypes
  * @apiVersion 1.0.0
@@ -14,7 +14,12 @@ const { productTypesGet, productTypesGetById,} = require("../../use-cases/produc
  */
 router.route("/productTypes").get(async (req, res) => {
   try {
-    const products = await interactor.getProductTypes({ productTypesGet });
+    const token = req.headers['token']
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const search = req.query.search || '';
+
+    const products = await interactor.getProductTypes({ productTypesGet }, { token, page, limit, search });
     res.status(products.status).send(products);
   } catch (error) {
     throw error;
@@ -31,11 +36,12 @@ router.route("/productTypes").get(async (req, res) => {
  * @apiError {Error} 404 Product type not found
  * @apiError {Error} 500 Internal Server Error
  */
-router.route("/productType/:id").get(async (req, res) => {
+router.route("/productTypes/:id").get(async (req, res) => {
   const id = req.params.id;
+  const token = req.headers['token']
 
   try {
-    const product = await interactor.getProductTypeById( { productTypesGetById }, id);
+    const product = await interactor.getProductTypeById({ productTypesGetById }, {token, id});
     res.status(product.status).send(product);
   } catch (error) {
     throw error;
