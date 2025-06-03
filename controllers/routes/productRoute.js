@@ -8,6 +8,7 @@ const { productsCreate } = require("../../use-cases/products/create");
 const { productsGet, productsGetById } = require("../../use-cases/products/get");
 const { productsDelete } = require("../../use-cases/products/delete");
 const { productsUpdate } = require("../../use-cases/products/update");
+const { productsRestore } = require("../../use-cases/products/restore");
 
 let fileName = "";
 const storage = multer.diskStorage({
@@ -37,17 +38,16 @@ const upload = multer({ storage });
  * @apiError {Error} 400 Product already exists
  * @apiError {Error} 500 Internal Server Error
  */
-router.route("/products").post(upload.single("image_url"), async (req, res) => {
-  //const image_url = path.extname(req.file.originalname);
-  //const image_url = req.file.originalname;
-  const image_url = fileName;
+router.route("/products").post(upload.single("image"), async (req, res) => {
+
   const token = req.headers["token"];
-  const { id, name, product_type_id } = req.body;
-  console.log("TOKEN:", token);
+  const { code, description, product_type_id } = req.body;
+  const image = req.file;
+
   try {
     const product = await interactor.createProducts(
       { productsCreate },
-      { id, name, product_type_id, image_url, token }
+      { code, description, product_type_id, image, token }
     );
     res.status(product.status).send(product);
   } catch (error) {
@@ -66,10 +66,15 @@ router.route("/products").post(upload.single("image_url"), async (req, res) => {
  */
 router.route("/products").get(async (req, res) => {
   /******  0a098c67-5179-491a-9932-f091f5d7fab5  *******/
+  const token = req.headers["token"];
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
+  const search = req.query.search || '';
+  const product_type_id = req.query.product_type_id || null;
   try {
     const products = await interactor.getProducts({
       productsGet,
-    });
+    }, { token, page, limit, search, product_type_id });
     res.status(products.status).send(products);
   } catch (error) {
     throw error;
@@ -88,11 +93,12 @@ router.route("/products").get(async (req, res) => {
  */
 router.route("/products/:id").get(async (req, res) => {
   const id = req.params.id;
+  const token = req.headers["token"];
 
   try {
     const product = await interactor.getProductsById(
       { productsGetById },
-      id
+      { id, token }
     );
     res.status(product.status).send(product);
   } catch (error) {
@@ -111,13 +117,29 @@ router.route("/products/:id").get(async (req, res) => {
  * @apiError {Error} 400 Product already exists
  * @apiError {Error} 500 Internal Server Error
  */
-router.route("/products").delete(async (req, res) => {
+router.route("/products/:id/delete").patch(async (req, res) => {
   const token = req.headers["token"];
-  const { id } = req.body;
+  const { id } = req.params;
 
   try {
     const product = await interactor.deleteProducts(
       { productsDelete, },
+      { id, token }
+    );
+
+    res.status(product.status).send(product);
+  } catch (error) {
+    throw error;
+  }
+});
+
+router.route("/products/:id/restore").patch(async (req, res) => {
+  const token = req.headers["token"];
+  const { id } = req.params;
+
+  try {
+    const product = await interactor.restoreProducts(
+      { productsRestore, },
       { id, token }
     );
 
@@ -135,22 +157,23 @@ router.route("/products").delete(async (req, res) => {
  * @apiParam {Number} id Product ID
  * @apiParam {String} name Product name
  * @apiParam {Number} product_type_id Product type ID
- * @apiParam {File} image_url Product image
+ * @apiParam {File} image_name Product image
  * @apiParam {String} token User token
  * @apiSuccess {Object} Product updated successfully
  * @apiError {Error} 400 Product already exists
  * @apiError {Error} 500 Internal Server Error
  */
-router.route("/products").put(upload.single("image_url"), async (req, res) => {
+router.route("/products/:id").put(upload.single("image"), async (req, res) => {
   const token = req.headers["token"];
+  const id = req.params.id;
 
-  const image_url = fileName;
-  const { id, name, product_type_id } = req.body;
+  const image = req.file;
+  const { code, description, product_type_id } = req.body;
 
   try {
     const product = await interactor.updateProducts(
       { productsUpdate },
-      { id, name, product_type_id, image_url, token }
+      { id, code, description, image, product_type_id, token }
     );
     res.status(product.status).send(product);
   } catch (error) {

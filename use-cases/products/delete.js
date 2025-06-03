@@ -4,34 +4,53 @@ require("dotenv").config();
 require("../../framework/db/mongoDB/models/productModel");
 const Product = mongoose.model("Product");
 
-const validations = async (product) => {
-  if (!product.id) return { status: 400, message: "Product id is required." };
+const validations = async (id) => {
+  if (!id) return { status: 400, message: "Product id is required." };
 
-  const productExists = await Product.findOne({ id: product.id });
-  if (!productExists) return { status: 404, message: "Product not exists." };
+  const productExists = await Product.findOne({ _id: id });
+  if (!productExists) return { status: 404, message: "Product does not exist." };
 
 };
 
-exports.productsDelete = async (product) => {
+exports.productsDelete = async ({ token, id }) => {
   try {
-    const decoded = jwt.verify(product.token, process.env.SECRET_KEY);
-    if (
-      decoded.role == process.env.ROLE_ADMIN ||
-      decoded.role == process.env.ROLE_MANAGER
-    ) {
-      // Validations
-      let validationResult = await validations(product);
 
-      if (validationResult)  return validationResult;
+    // Ensure the token is provided
+    if (!token || !id) {
+      return { status: 400, message: "token and id are required" };
+    }
 
-      const productDeleted = await Product.findOneAndDelete({ id: product.id });
+    try {
+      const decoded = jwt.verify(token, process.env.SECRET_KEY);
 
-      if (!productDeleted || productDeleted.length === 0) {
-        return { status: 404, message: "Product not found." };
+      if (
+        decoded.role !== process.env.ROLE_ADMIN &&
+        decoded.role !== process.env.ROLE_MANAGER
+      ) {
+        return { status: 403, message: "Access denied" };
       }
 
-      return { status: 200, data: productDeleted };
+    } catch (error) {
+      console.log("error", error);
+
+      // Fallback error response
+      return { status: 403, message: "Access denied" };
     }
+
+    // Validations
+    let validationResult = await validations(id);
+
+    if (validationResult) return validationResult;
+
+    const productDeleted = await Product.findOneAndUpdate(
+      { _id: id },
+      { active: false },
+      { new: true }
+    );
+
+    return { status: 200, data: productDeleted };
+
+
   } catch (error) {
     console.log("error", error);
 

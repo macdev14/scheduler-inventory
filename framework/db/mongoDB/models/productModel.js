@@ -4,10 +4,10 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const productSchema = new Schema(
   {
-    code: { type: Number, required: true },
+    code: { type: String, required: true },
     description: { type: String, required: true },
-    product_type_id: { type: Number, required: true },
-    image_url: { type: String, required: false },
+    product_type_id: { type: String, required: true },
+    image_name: { type: String, required: false },
     active: { type: Boolean, required: true, default: true },
   },
   { collection: "product" }

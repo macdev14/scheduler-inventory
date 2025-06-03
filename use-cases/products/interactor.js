@@ -4,22 +4,19 @@ const { ProductJwtEntity } = require("../../entities/ProductJwtEntity");
 
 exports.createProducts = async (
   { productsCreate },
-  { id, name, product_type_id, image_url, token }
+  { code, product_type_id, description, image, token }
 ) => {
   try {
     //persiste
     const product = new ProductJwtEntity({
-      id,
-      name,
+      code,
       product_type_id,
-      image_url,
+      description,
       active: true,
       token,
     });
-
-    console.log("product", product);
-
-    const createProduct = await productsCreate(product);
+    console.log("image", image);
+    const createProduct = await productsCreate(product, image);
 
     return createProduct;
   } catch (error) {
@@ -39,9 +36,9 @@ exports.createProducts = async (
   }
 };
 
-exports.getProducts = async ({ productsGet }) => {
+exports.getProducts = async ({ productsGet }, { token, page, limit, search, product_type_id }) => {
   try {
-    const products = await productsGet();
+    const products = await productsGet({ token, page, limit, search, product_type_id });
     return products;
   } catch (error) {
     res.status(500).send({
@@ -51,9 +48,9 @@ exports.getProducts = async ({ productsGet }) => {
   }
 };
 
-exports.getProductsById = async ({ productsGetById }, id) => {
+exports.getProductsById = async ({ productsGetById }, { id, token }) => {
   try {
-    const product = await productsGetById(id);
+    const product = await productsGetById({ id, token });
 
     return product;
   } catch (error) {
@@ -64,9 +61,9 @@ exports.getProductsById = async ({ productsGetById }, id) => {
   }
 };
 
-exports.deleteProducts = async ({ productsDelete }, id) => {
+exports.deleteProducts = async ({ productsDelete }, { token, id }) => {
   try {
-    const product = await productsDelete(id);
+    const product = await productsDelete({ token, id });
     return product;
   } catch (error) {
     res.status(500).send({
@@ -76,9 +73,33 @@ exports.deleteProducts = async ({ productsDelete }, id) => {
   }
 };
 
-exports.updateProducts = async ({ productsUpdate }, product) => {
+exports.restoreProducts = async ({ productsRestore }, { token, id }) => {
   try {
-    const updatedProduct = await productsUpdate(product);
+    const product = await productsRestore({ token, id });
+    return product;
+  } catch (error) {
+    res.status(500).send({
+      status: 500,
+      message: 'An error occurred: ' + error,
+    });
+  }
+};
+
+exports.updateProducts = async ({ productsUpdate },
+  {id, code, name, product_type_id, description, image, token }
+) => {
+  try {
+    //persiste
+    const product = new ProductJwtEntity({
+      id,
+      code,
+      name,
+      product_type_id,
+      description,
+      active: true,
+      token,
+    });
+    const updatedProduct = await productsUpdate(product, image);
     return updatedProduct;
   } catch (error) {
     res.status(500).send({
