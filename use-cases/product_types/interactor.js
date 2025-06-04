@@ -24,15 +24,3 @@ exports.getProductTypeById = async ({ productTypesGetById }, id) => {
     });
   }
 };
-exports.createDefaultProductTypes = async ({ createProductTypes }, { }) => {
-  try {
-    console.log("createProductTypes", createProductTypes);
-    const productType = await createProductTypes();
-    return productType;
-  } catch (error) {
-    res.status(500).send({
-      status: 500,
-      message: 'An error occurred: ' + error,
-    });
-  }
-};

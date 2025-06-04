@@ -5,7 +5,8 @@ require("dotenv").config();
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const { createProductTypes } = require("./use-cases/product_types/create");
-const productTypeInteractor = require("./use-cases/product_types/interactor");
+const { createAddresses } = require("./use-cases/addresses/create");
+const { createWarehouses } = require("./use-cases/warehouses/create");
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./public/apidocjs/swagger.json');
 const cors = require('cors');
@@ -26,8 +27,9 @@ mongoose
     console.log("Connected to the database");
     (async () => {
       try {
-          const productTypes = await productTypeInteractor.createDefaultProductTypes({createProductTypes}, {});
-          console.log(productTypes);
+          const productTypes = await createProductTypes();
+          const addresses = await createAddresses();
+          const warehouses = await createWarehouses();
       } catch (err) {
           console.log("err", err);
       }

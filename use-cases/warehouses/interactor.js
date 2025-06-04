@@ -1,28 +1,28 @@
 "use strict";
 
-const { WarehouseEntity } = require("../../entities/WarehouseEntity");
+const { WarehouseJwtEntity } = require("../../entities/WarehouseJwtEntity");
 
-exports.getWarehouses = async ({ warehousesGet }) => {
+exports.getWarehouses = async ({ warehousesGet }, { token, page, limit, search }) => {
   try {
-    const warehouses = await warehousesGet();
-    return warehouses;
+    const getWarehouses = await warehousesGet({token, page, limit, search});
+    return getWarehouses;
   } catch (error) {
-    res.status(500).send({
+    return {
       status: 500,
-      message: 'An error occurred: ' + error,
-    });
+      message: 'An error occurred: ' + error.message
+    };
   }
 };
 
-exports.getWarehousesById = async ({ warehousesGetById }, id) => {
+exports.getWarehousesById = async ({ warehousesGetById }, {token, id}) => {
   try {
-    const warehouse = await warehousesGetById(id);
+    const warehouse = await warehousesGetById({token, id});
 
     return warehouse;
   } catch (error) {
-    res.status(500).send({
+    return {
       status: 500,
-      message: 'An error occurred: ' + error,
-    });
+      message: 'An error occurred: ' + error.message
+    };
   }
 };

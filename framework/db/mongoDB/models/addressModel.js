@@ -15,10 +15,6 @@ const addressSchema = new Schema(
   },
   { collection: "address" }
 );
-const Address = mongoose.model("Address", addressSchema);
-
-module.exports = Address;
-
 
 // Seed data for addresses
 addressSchema.statics.seedAddresses = async function () {
@@ -74,5 +70,9 @@ addressSchema.statics.seedAddresses = async function () {
   }
 };
 
-module.exports = addressSeeds;
+const Address = mongoose.model("Address", addressSchema);
+module.exports = Address;
+
+
+
 

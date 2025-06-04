@@ -14,10 +14,16 @@ const { warehousesGet, warehousesGetById } = require("../../use-cases/warehouses
  * @apiError {Error} 500 Internal Server Error
  */
 router.route("/warehouses").get(async (req, res) => {
+  const token = req.headers['token']
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
+  const search = req.query.search || '';
   try {
     const warehouses = await interactor.getWarehouses({
-      warehousesGet,
-    });
+      warehousesGet
+    },
+    { token, page, limit, search }
+    );
     res.status(warehouses.status).send(warehouses);
   } catch (error) {
     throw error;
@@ -36,11 +42,12 @@ router.route("/warehouses").get(async (req, res) => {
  * @apiError {Error} 500 Internal Server Error
  */
 router.route("/warehouses/:id").get(async (req, res) => {
+  const token = req.headers['token']
   const id = req.params.id;
   try {
     const warehouse = await interactor.getWarehousesById(
       { warehousesGetById },
-      id
+      {id, token}
     );
     res.status(warehouse.status).send(warehouse);
   } catch (error) {

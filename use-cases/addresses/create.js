@@ -1,6 +1,6 @@
 "use strict";
 const mongoose = require("mongoose");
-require("../../framework/db/mongoDB/models/addressesModel");
+require("../../framework/db/mongoDB/models/addressModel");
 const Address = mongoose.model("Address");
 require("dotenv").config();
 
@@ -14,7 +14,7 @@ exports.createAddresses = async () => {
         message: "Database has addresses, no action required",
       };
     }
-    await Address.type_1();
+    await Address.seedAddresses();
 
     return { status: 201, message: "Addresses created successfully" };
   } catch (error) {
