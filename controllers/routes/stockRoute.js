@@ -32,12 +32,13 @@ const {
  * @apiError {Error} 400 Stock already exists
  * @apiError {Error} 500 Internal Server Error
  */
-router.route("/stock").post(async (req, res) => {
+router.route("/stocks").post(async (req, res) => {
   const token = req.headers["token"];
   const { product_id, warehouse_id, quantity } = req.body;
 
   try {
-    const stock = await interactor.updateStocks(
+    console.log("req.body", req.body);
+    const stock = await interactor.createStocks(
       { stocksCreate },
       { product_id, warehouse_id, quantity, token }
     );
@@ -56,35 +57,16 @@ router.route("/stock").post(async (req, res) => {
  * @apiError {Error} 500 Internal Server Error
  */
 router.route("/stocks").get(async (req, res) => {
+  const token = req.headers['token']
+  const product_id = req.query.product_id;
   try {
     const stocks = await interactor.getStocks({
       stocksGet,
+    }, {
+      token,
+      product_id
     });
     res.status(stocks.status).send(stocks);
-  } catch (error) {
-    throw error;
-  }
-});
-
-/**
- * @api {get} /stocks/byProductId Get a stock entry by product ID
- * @apiName GetStock
- * @apiGroup Stocks
- * @apiPermission authenticated user
- * @apiParam {Number} product_id Product ID
- * @apiSuccess {Object} Stock entry
- * @apiError {Error} 404 Stock not found
- * @apiError {Error} 500 Internal Server Error
- */
-router.route("/stocks/byProductId").get(async (req, res) => {
-  const product_id = req.query.product_id;
-
-  try {
-    const stock = await interactor.getStocksByProductId(
-      { stocksGetByProductId },
-      product_id
-    );
-    res.status(stock.status).send(stock);
   } catch (error) {
     throw error;
   }

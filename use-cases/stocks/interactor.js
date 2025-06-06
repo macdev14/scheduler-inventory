@@ -30,10 +30,9 @@ exports.createStocks = async (
         message: "Product already exists.",
       };
     }
-    res.status(500).send({
-      status: 500,
-      message: 'An error occurred: ' + error,
-    });
+
+    // Fallback error response
+    return ({ status: 500, message: "Something went wrong" });
   }
 };
 
@@ -42,23 +41,10 @@ exports.getStocks = async ({ stocksGet }) => {
     const stocks = await stocksGet();
     return stocks;
   } catch (error) {
-    res.status(500).send({
-      status: 500,
-      message: 'An error occurred: ' + error,
-    });
-  }
-};
+    console.log("error", error);
 
-exports.getStocksByProductId = async ({ stocksGetByProductId }, product_id) => {
-  try {
-    const product = await stocksGetByProductId(product_id);
-
-    return product;
-  } catch (error) {
-    res.status(500).send({
-      status: 500,
-      message: 'An error occurred: ' + error,
-    });
+    // Fallback error response
+    return ({ status: 500, message: "Something went wrong" });
   }
 };
 
@@ -67,10 +53,10 @@ exports.deleteStocks = async ({ stocksDelete }, stock) => {
     const stockDeleted = await stocksDelete(stock);
     return stockDeleted;
   } catch (error) {
-    res.status(500).send({
-      status: 500,
-      message: 'An error occurred: ' + error,
-    });
+    console.log("error", error);
+
+    // Fallback error response
+    return ({ status: 500, message: "Something went wrong" });
   }
 };
 
@@ -79,9 +65,9 @@ exports.updateStocks = async ({ stocksUpdate }, stock) => {
     const updatedStock = await stocksUpdate(stock);
     return updatedStock;
   } catch (error) {
-    res.status(500).send({
-      status: 500,
-      message: 'An error occurred: ' + error,
-    });
+    console.log("error", error);
+
+    // Fallback error response
+    return ({ status: 500, message: "Something went wrong" });
   }
 };
