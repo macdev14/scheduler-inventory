@@ -24,15 +24,16 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 
+
 /**
- * @api {post} /product Create a new product entry
+ * @api {post} /products Create a new product entry
  * @apiName CreateProduct
  * @apiGroup Products
  * @apiPermission authenticated user
- * @apiParam {Number} id Product ID
- * @apiParam {String} name Product name
- * @apiParam {Number} product_type_id Product type ID
- * @apiParam {File} image_url Product image
+ * @apiParam {String} code Product code
+ * @apiParam {String} description Product description
+ * @apiParam {String} product_type_id Product type ID
+ * @apiParam {File} image Product image
  * @apiParam {String} token User token
  * @apiSuccess {Object} Product created successfully
  * @apiError {Error} 400 Product already exists
@@ -55,17 +56,20 @@ router.route("/products").post(upload.single("image"), async (req, res) => {
   }
 });
 
+
 /**
- * @api {get} /products Get all product entries
- * @apiName GetProductAll
+ * @api {get} /products Get all products
+ * @apiName GetProducts
  * @apiGroup Products
- * @apiVersion 1.0.0
  * @apiPermission authenticated user
+ * @apiParam {Number} [page=1] Page number for pagination
+ * @apiParam {Number} [limit=10] Number of products per page
+ * @apiParam {String} [search] Search term for products
+ * @apiParam {String} [product_type_id] Filter by product type ID
  * @apiSuccess {Object[]} Array of product entries
  * @apiError {Error} 500 Internal Server Error
  */
 router.route("/products").get(async (req, res) => {
-  /******  0a098c67-5179-491a-9932-f091f5d7fab5  *******/
   const token = req.headers["token"];
   const page = parseInt(req.query.page) || 1;
   const limit = parseInt(req.query.limit) || 10;
@@ -81,12 +85,14 @@ router.route("/products").get(async (req, res) => {
   }
 });
 
+
 /**
- * @api {get} /product/:id Get a product entry by ID
+ * @api {get} /products/:id Get a product entry by ID
  * @apiName GetProduct
  * @apiGroup Products
  * @apiPermission authenticated user
- * @apiParam {Number} id Product ID
+ * @apiParam {String} id Product ID
+ * @apiParam {String} token User token
  * @apiSuccess {Object} Product entry
  * @apiError {Error} 404 Product not found
  * @apiError {Error} 500 Internal Server Error
@@ -106,15 +112,16 @@ router.route("/products/:id").get(async (req, res) => {
   }
 });
 
+
 /**
- * @api {delete} /product Delete a product entry
+ * @api {patch} /product/:id/delete Delete a product entry
  * @apiName DeleteProduct
  * @apiGroup Products
  * @apiPermission authenticated user
- * @apiParam {Number} id Product ID
+ * @apiParam {String} id Product ID
  * @apiParam {String} token User token
  * @apiSuccess {Object} Product deleted successfully
- * @apiError {Error} 400 Product already exists
+ * @apiError {Error} 404 Product not found
  * @apiError {Error} 500 Internal Server Error
  */
 router.route("/products/:id/delete").patch(async (req, res) => {
@@ -133,6 +140,17 @@ router.route("/products/:id/delete").patch(async (req, res) => {
   }
 });
 
+/**
+ * @api {patch} /product/:id/restore Restore a product entry
+ * @apiName RestoreProduct
+ * @apiGroup Products
+ * @apiPermission authenticated user
+ * @apiParam {String} id Product ID
+ * @apiParam {String} token User token
+ * @apiSuccess {Object} Product restored successfully
+ * @apiError {Error} 404 Product not found
+ * @apiError {Error} 500 Internal Server Error
+ */
 router.route("/products/:id/restore").patch(async (req, res) => {
   const token = req.headers["token"];
   const { id } = req.params;
@@ -154,9 +172,9 @@ router.route("/products/:id/restore").patch(async (req, res) => {
  * @apiName UpdateProduct
  * @apiGroup Products
  * @apiPermission authenticated user
- * @apiParam {Number} id Product ID
+ * @apiParam {String} id Product ID
  * @apiParam {String} name Product name
- * @apiParam {Number} product_type_id Product type ID
+ * @apiParam {String} product_type_id Product type ID
  * @apiParam {File} image_name Product image
  * @apiParam {String} token User token
  * @apiSuccess {Object} Product updated successfully

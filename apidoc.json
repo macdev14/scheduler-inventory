@@ -1,0 +1,11 @@
+{
+  "name": "Scheduler Inventory API",
+  "version": "1.0.0",
+  "description": "API for managing product inventory and warehouses",
+  "title": "Scheduler Inventory API Docs",
+  "url": "http://localhost:3000/api/v1",
+  "template": {
+    "withCompare": true,
+    "withGenerator": true
+  }
+}

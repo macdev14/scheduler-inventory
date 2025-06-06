@@ -3,12 +3,15 @@ const router = require("express").Router();
 const { productTypesGet, productTypesGetById, } = require("../../use-cases/product_types/get");
 
 
+
 /**
  * @api {get} /productTypes Get all product types
- * @apiName GetProductTypesAll
- * @apiGroup ProductTypes
- * @apiVersion 1.0.0
+ * @apiName GetProductTypes
+ * @apiGroup Product Types
  * @apiPermission authenticated user
+ * @apiParam {Number} [page=1] Page number for pagination
+ * @apiParam {Number} [limit=10] Number of product types per page
+ * @apiParam {String} [search] Search term for product types
  * @apiSuccess {Object[]} Array of product type entries
  * @apiError {Error} 500 Internal Server Error
  */
@@ -26,12 +29,14 @@ router.route("/productTypes").get(async (req, res) => {
   }
 });
 
+
 /**
- * @api {get} /productType Get a product type entry by ID
+ * @api {get} /productTypes/:id Get a product type by ID
  * @apiName GetProductType
- * @apiGroup ProductTypes
+ * @apiGroup Product Types
  * @apiPermission authenticated user
- * @apiParam {Number} id Product Type ID
+ * @apiParam {String} id Product type ID
+ * @apiParam {String} token User token
  * @apiSuccess {Object} Product type entry
  * @apiError {Error} 404 Product type not found
  * @apiError {Error} 500 Internal Server Error

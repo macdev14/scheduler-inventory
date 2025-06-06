@@ -5,11 +5,13 @@ const router = require("express").Router();
 const { warehousesGet, warehousesGetById } = require("../../use-cases/warehouses/get");
 
 /**
- * @api {get} /warehouse/all Get all warehouse entries
- * @apiName GetWarehouseAll
+ * @api {get} /warehouses Get all warehouses
+ * @apiName GetWarehouses
  * @apiGroup Warehouses
- * @apiVersion 1.0.0
  * @apiPermission authenticated user
+ * @apiParam {Number} [page=1] Page number
+ * @apiParam {Number} [limit=10] Number of warehouses per page
+ * @apiParam {String} [search] Search string
  * @apiSuccess {Object[]} Array of warehouse entries
  * @apiError {Error} 500 Internal Server Error
  */
@@ -31,10 +33,9 @@ router.route("/warehouses").get(async (req, res) => {
 });
 
 /**
- * @api {get} /warehouse Get a warehouse entry by ID
+ * @api {get} /warehouses/:id Get a warehouse by ID
  * @apiName GetWarehouse
  * @apiGroup Warehouses
- * @apiVersion 1.0.0
  * @apiPermission authenticated user
  * @apiParam {String} id Warehouse ID
  * @apiSuccess {Object} Warehouse entry

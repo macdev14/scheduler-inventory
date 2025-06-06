@@ -24,13 +24,13 @@ const {
 
 
 /**
- * @api {post} /stock Create a new stock entry
+ * @api {post} /stocks Create a new stock entry
  * @apiName CreateStock
  * @apiGroup Stocks
  * @apiPermission authenticated user
- * @apiParam {Number} product_id Product ID
- * @apiParam {Number} warehouse_id Warehouse ID
- * @apiParam {Number} quantity Quantity
+ * @apiParam {String} product_id Product ID
+ * @apiParam {String} warehouse_id Warehouse ID
+ * @apiParam {Number} quantity Stock quantity
  * @apiParam {String} token User token
  * @apiSuccess {Object} Stock created successfully
  * @apiError {Error} 400 Stock already exists
@@ -52,11 +52,18 @@ router.route("/stocks").post(async (req, res) => {
   }
 });
 
+
 /**
- * @api {get} /stocks Get all stock entries
- * @apiName GetStockAll
+ * @api {get} /stocks Get all stocks
+ * @apiName GetStocks
  * @apiGroup Stocks
  * @apiPermission authenticated user
+ * @apiParam {String} product_id Product ID (optional)
+ * @apiParam {String} warehouse_id Warehouse ID (optional)
+ * @apiParam {Number} quantity Stock quantity (optional)
+ * @apiParam {String} active Stock active status (optional)
+ * @apiParam {Number} page Page number for pagination (optional)
+ * @apiParam {Number} limit Number of stocks per page (optional)
  * @apiSuccess {Object[]} Array of stock entries
  * @apiError {Error} 500 Internal Server Error
  */
@@ -87,16 +94,17 @@ router.route("/stocks").get(async (req, res) => {
   }
 });
 
+
 /**
- * @api {delete} /stock Delete a stock entry
+ * @api {patch} /stocks/delete Delete a stock entry
  * @apiName DeleteStock
  * @apiGroup Stocks
  * @apiPermission authenticated user
- * @apiParam {Number} product_id Product ID
- * @apiParam {Number} warehouse_id Warehouse ID
+ * @apiParam {String} product_id Product ID
+ * @apiParam {String} warehouse_id Warehouse ID
  * @apiParam {String} token User token
  * @apiSuccess {Object} Stock deleted successfully
- * @apiError {Error} 400 Stock already exists
+ * @apiError {Error} 404 Stock not found
  * @apiError {Error} 500 Internal Server Error
  */
 router.route("/stocks/delete").patch(async (req, res) => {
@@ -115,6 +123,18 @@ router.route("/stocks/delete").patch(async (req, res) => {
 });
 
 
+/**
+ * @api {patch} /stocks/restore Restore a stock entry
+ * @apiName RestoreStock
+ * @apiGroup Stocks
+ * @apiPermission authenticated user
+ * @apiParam {String} product_id Product ID
+ * @apiParam {String} warehouse_id Warehouse ID
+ * @apiParam {String} token User token
+ * @apiSuccess {Object} Stock restored successfully
+ * @apiError {Error} 404 Stock not found
+ * @apiError {Error} 500 Internal Server Error
+ */
 router.route("/stocks/restore").patch(async (req, res) => {
   const token = req.headers["token"];
   const { product_id, warehouse_id } = req.body;
@@ -130,17 +150,18 @@ router.route("/stocks/restore").patch(async (req, res) => {
   }
 });
 
+
 /**
- * @api {put} /stock Update a stock entry
+ * @api {put} /stocks Update a stock entry
  * @apiName UpdateStock
  * @apiGroup Stocks
  * @apiPermission authenticated user
- * @apiParam {Number} product_id Product ID
- * @apiParam {Number} warehouse_id Warehouse ID
- * @apiParam {Number} quantity Quantity
+ * @apiParam {String} product_id Product ID
+ * @apiParam {String} warehouse_id Warehouse ID
+ * @apiParam {Number} quantity Stock quantity
  * @apiParam {String} token User token
  * @apiSuccess {Object} Stock updated successfully
- * @apiError {Error} 400 Stock already exists
+ * @apiError {Error} 404 Stock not found
  * @apiError {Error} 500 Internal Server Error
  */
 router.route("/stocks").put(async (req, res) => {
