@@ -10,11 +10,11 @@ require("../../framework/db/mongoDB/models/fileModel");
 const File = mongoose.model("File");
 
 const validations = async (product) => {
-  if (!product.code) return { status: 400, message: "Product code is required." };
+  if (!product.code) return { status: 400, message: "code is required." };
   const productExists = await Product.findOne({ code: product.code });
   if (productExists) return { status: 400, message: "Product already exists." };
-  if (!product.description) return { status: 400, message: "Product description is required." };
-  if (!product.product_type_id) return { status: 400, message: "Product type id is required." };
+  if (!product.description) return { status: 400, message: "description is required." };
+  if (!product.product_type_id) return { status: 400, message: "product_type_id is required." };
 
   const productTypeExists = await ProductType.findOne({ _id: product.product_type_id });
 

@@ -5,7 +5,7 @@ require("../../framework/db/mongoDB/models/productModel");
 const Product = mongoose.model("Product");
 
 const validations = async (id) => {
-  if (!id) return { status: 400, message: "Product id is required." };
+  if (!id) return { status: 400, message: "id is required." };
 
   const productExists = await Product.findOne({ _id: id });
   if (!productExists) return { status: 404, message: "Product does not exist." };

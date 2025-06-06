@@ -4,15 +4,17 @@ require("dotenv").config();
 require("../../framework/db/mongoDB/models/stockModel");
 const Stock = mongoose.model("Stock");
 
-const validations = async (stock) => {
-  if (!stock.product_id) return { status: 400, message: "Product id is required." };
-  if (!stock.warehouse_id) return { status: 400, message: "Warehouse id is required." };
-  if (!stock.quantity) return { status: 400, message: "Quantity is required." };
-  if (stock.quantity < 0) return { status: 400, message: "Quantity cannot be negative." };
+const validations = async (stocks) => {
+  if (!stocks.product_id) return { status: 400, message: "product_id is required." };
+  if (!mongoose.Types.ObjectId.isValid(stocks.product_id)) return { status: 400, message: "product_id is not a valid id." };
+  if (!stocks.warehouse_id) return { status: 400, message: "warehouse_id is required." };
+  if (!mongoose.Types.ObjectId.isValid(stocks.warehouse_id)) return { status: 400, message: "warehouse_id is not a valid id." };
+  if (!stocks.quantity) return { status: 400, message: "quantity is required." };
+  if (stocks.quantity < 1) return { status: 400, message: "Quantity cannot be negative or 0." };
 
   const stockExists = await Stock.findOne({
-    product_id: stock.product_id,
-    warehouse_id: stock.warehouse_id,
+    product_id: stocks.product_id,
+    warehouse_id: stocks.warehouse_id,
   });
 
   if (!stockExists) {
@@ -21,29 +23,26 @@ const validations = async (stock) => {
       message: "Product stock not exists.",
     };
   }
-
-  return { success: true };
 };
 
-exports.stocksUpdate = async (stock) => {
+exports.stocksUpdate = async (stocks) => {
   try {
-    const decoded = jwt.verify(stock.token, process.env.SECRET_KEY);
+
+    if (!stocks.token) return { status: 400, message: "token is required." };
+    const decoded = jwt.verify(stocks.token, process.env.SECRET_KEY);
 
     if (
       decoded.role == process.env.ROLE_ADMIN ||
       decoded.role == process.env.ROLE_MANAGER
     ) {
       // Validations
-      let validationResult = await validations(stock);
+      let validationResult = await validations(stocks);
 
-      if (validationResult.success === false) {
-        // se houver erros, retornar os erros
-        return validationResult;
-      }
+      if (validationResult) return validationResult;
 
       const updatedStock = await Stock.findOneAndUpdate(
-        { product_id: stock.product_id, warehouse_id: stock.warehouse_id },
-        stock,
+        { product_id: stocks.product_id, warehouse_id: stocks.warehouse_id },
+        { quantity: stocks.quantity },
         { new: true }
       );
 

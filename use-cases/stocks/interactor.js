@@ -36,9 +36,9 @@ exports.createStocks = async (
   }
 };
 
-exports.getStocks = async ({ stocksGet }) => {
+exports.getStocks = async ({ stocksGet }, { token, product_id, warehouse_id, quantity, active, page, limit }) => {
   try {
-    const stocks = await stocksGet();
+    const stocks = await stocksGet({ token, product_id, warehouse_id, quantity, active, page, limit });
     return stocks;
   } catch (error) {
     console.log("error", error);
@@ -48,9 +48,9 @@ exports.getStocks = async ({ stocksGet }) => {
   }
 };
 
-exports.deleteStocks = async ({ stocksDelete }, stock) => {
+exports.deleteStocks = async ({ stocksDelete }, stocks) => {
   try {
-    const stockDeleted = await stocksDelete(stock);
+    const stockDeleted = await stocksDelete(stocks);
     return stockDeleted;
   } catch (error) {
     console.log("error", error);
@@ -60,9 +60,21 @@ exports.deleteStocks = async ({ stocksDelete }, stock) => {
   }
 };
 
-exports.updateStocks = async ({ stocksUpdate }, stock) => {
+exports.restoreStocks = async ({ stocksRestore }, stocks) => {
   try {
-    const updatedStock = await stocksUpdate(stock);
+    const stockDeleted = await stocksRestore(stocks);
+    return stockDeleted;
+  } catch (error) {
+    console.log("error", error);
+
+    // Fallback error response
+    return ({ status: 500, message: "Something went wrong" });
+  }
+};
+
+exports.updateStocks = async ({ stocksUpdate }, stocks) => {
+  try {
+    const updatedStock = await stocksUpdate(stocks);
     return updatedStock;
   } catch (error) {
     console.log("error", error);

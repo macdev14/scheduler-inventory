@@ -11,8 +11,8 @@ const Product = mongoose.model("Product");
 const validations = async (stocks) => {
   if (!stocks.product_id) return { status: 400, message: "product_id is required." };
   if (!stocks.warehouse_id) return { status: 400, message: "warehouse_id is required." };
-  if (!mongoose.Types.ObjectId.isValid(stocks.product_id)) return { status: 400, message: "Product id is not a valid id." };
-  if (!mongoose.Types.ObjectId.isValid(stocks.warehouse_id)) return { status: 400, message: "Warehouse id is not a valid id." };
+  if (!mongoose.Types.ObjectId.isValid(stocks.product_id)) return { status: 400, message: "product_id is not a valid id." };
+  if (!mongoose.Types.ObjectId.isValid(stocks.warehouse_id)) return { status: 400, message: "warehouse_id is not a valid id." };
   if (!stocks.quantity) return { status: 400, message: "quantity is required." };
   if (stocks.quantity < 1) return { status: 400, message: "Quantity cannot be negative or 0." };
 

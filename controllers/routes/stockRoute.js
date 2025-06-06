@@ -15,6 +15,10 @@ const {
 } = require("../../use-cases/stocks/delete");
 
 const {
+  stocksRestore,
+} = require("../../use-cases/stocks/restore");
+
+const {
   stocksUpdate,
 } = require("../../use-cases/stocks/update");
 
@@ -59,12 +63,23 @@ router.route("/stocks").post(async (req, res) => {
 router.route("/stocks").get(async (req, res) => {
   const token = req.headers['token']
   const product_id = req.query.product_id;
+  const warehouse_id = req.query.warehouse_id;
+  const quantity = req.query.quantity;
+  const active = req.query.active || true;
+
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
   try {
     const stocks = await interactor.getStocks({
       stocksGet,
     }, {
       token,
-      product_id
+      product_id,
+      warehouse_id,
+      quantity,
+      active,
+      page,
+      limit,
     });
     res.status(stocks.status).send(stocks);
   } catch (error) {
@@ -84,13 +99,29 @@ router.route("/stocks").get(async (req, res) => {
  * @apiError {Error} 400 Stock already exists
  * @apiError {Error} 500 Internal Server Error
  */
-router.route("/stocks").delete(async (req, res) => {
+router.route("/stocks/delete").patch(async (req, res) => {
   const token = req.headers["token"];
   const { product_id, warehouse_id } = req.body;
 
   try {
     const stock = await interactor.deleteStocks(
       { stocksDelete },
+      { product_id, warehouse_id, token }
+    );
+    res.status(stock.status).send(stock);
+  } catch (error) {
+    throw error;
+  }
+});
+
+
+router.route("/stocks/restore").patch(async (req, res) => {
+  const token = req.headers["token"];
+  const { product_id, warehouse_id } = req.body;
+
+  try {
+    const stock = await interactor.restoreStocks(
+      { stocksRestore },
       { product_id, warehouse_id, token }
     );
     res.status(stock.status).send(stock);

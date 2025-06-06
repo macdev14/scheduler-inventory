@@ -10,12 +10,12 @@ require("../../framework/db/mongoDB/models/fileModel");
 const File = mongoose.model("File");
 
 const validations = async (product) => {
-  if (!product.id) return { status: 400, message: "Product id is required." };
+  if (!product.id) return { status: 400, message: "id is required." };
 
   const productExists = await Product.findOne({ _id: product.id });
-  if (!product.code) return { status: 400, message: "Product code is required." };
-  if (!product.description) return { status: 400, message: "Product description is required." };
-  if (!product.product_type_id) return { status: 400, message: "Product type id is required." };
+  if (!product.code) return { status: 400, message: "code is required." };
+  if (!product.description) return { status: 400, message: "description is required." };
+  if (!product.product_type_id) return { status: 400, message: "product_type_id is required." };
 
   const productTypeExists = await ProductType.findOne({ _id: product.product_type_id });
   if (!productTypeExists) return { status: 400, message: "Product type does not exist." };
@@ -27,7 +27,7 @@ exports.productsUpdate = async (product, image) => {
   const { id, code, description, product_type_id, image_url, token } = product;
   try {
 
-    if (!token) return { status: 400, message: "User token is required." };
+    if (!token) return { status: 400, message: "token is required." };
 
     try {
       const decoded = jwt.verify(token, process.env.SECRET_KEY);

@@ -5,7 +5,7 @@ require("../../framework/db/mongoDB/models/productModel");
 const Product = mongoose.model("Product");
 
 const validations = async (id) => {
-    if (!id) return { status: 400, message: "Product id is required." };
+    if (!id) return { status: 400, message: "product_id is required." };
 
     const productExists = await Product.findOne({ _id: id });
     if (!productExists) return { status: 404, message: "Product does not exist." };
@@ -24,8 +24,7 @@ exports.productsRestore = async ({ token, id }) => {
             const decoded = jwt.verify(token, process.env.SECRET_KEY);
 
             if (
-                decoded.role !== process.env.ROLE_ADMIN &&
-                decoded.role !== process.env.ROLE_MANAGER
+                decoded.role !== process.env.ROLE_ADMIN
             ) {
                 return { status: 403, message: "Access denied" };
             }

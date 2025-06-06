@@ -22,7 +22,7 @@ const validations = async (stocks) => {
 
 };
 
-exports.stocksDelete = async (stocks) => {
+exports.stocksRestore = async (stocks) => {
   try {
     if(!stocks.token) return { status: 400, message: "token is required." };
 
@@ -30,8 +30,7 @@ exports.stocksDelete = async (stocks) => {
       const decoded = jwt.verify(stocks.token, process.env.SECRET_KEY);
 
       if (
-        decoded.role !== process.env.ROLE_ADMIN &&
-        decoded.role !== process.env.ROLE_MANAGER
+        decoded.role !== process.env.ROLE_ADMIN 
       ) {
         return { status: 403, message: "Access denied" };
       }
@@ -53,7 +52,7 @@ exports.stocksDelete = async (stocks) => {
         product_id: stocks.product_id,
         warehouse_id: stocks.warehouse_id,
       },
-      { active: false },
+      { active: true },
       { new: true }
     );
 
